@@ -55,7 +55,7 @@ def insertport(listport, cursor):
     rows = cursor.fetchall()
     print(rows)
     for actuport in listport:
-        if actuport not in rows:
+        if (actuport,) not in rows:
             print('Valeur non connu')
             cursor.execute("""
             INSERT INTO services(port, proto, banner, version, last_view) VALUES(?, ?, ?, ?, ?)""", (actuport, "proto", "banner", "2", "12:12:12 12/12/12"))
