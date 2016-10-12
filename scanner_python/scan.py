@@ -1,10 +1,21 @@
+##########################
+#                        #
+# Scanner python NMAP    #
+#                        #
+##########################
+
 from termcolor import colored
 from datetime import datetime
 import sys
 import nmap
 import sqlite3
 
-num_service=0
+############################################
+#                                          #
+# Classe Host definissant                  #
+# une machine (ip, port, service, date)    #
+#                                          #
+############################################
 
 class Host:
 
@@ -50,15 +61,55 @@ class Host:
     def date(self, d):
         self._date = d
 
+################################################
+#                                              #
+# Fonction inserport                           #
+# Insert les ports et les services dans la BDD #
+# S'ils ne sont pas connus                     #
+#                                              #
+################################################
+
 def insertport(listport, cursor):
     cursor.execute("""SELECT port FROM services""")
     rows = cursor.fetchall()
-    print(rows)
     for actuport in listport:
         if (actuport,) not in rows:
-            print('Valeur non connu')
+            try:
+                print colored('\tInsertion du port %s...' % actuport, 'blue')
+                cursor.execute("""
+                INSERT INTO services(port, proto, banner, version, last_view) VALUES(?, ?, ?, ?, ?)""", (actuport, "proto", "banner", "2", "12:12:12 12/12/12"))
+            except sqlite3.Error, e:
+                print colored('Error INSERT PORT %s:' % e.args[0], 'red')
+                sys.exit(2)
+
+############################################
+#                                          #
+# Fonction insermachine                    #
+# Insert les machines dans la BDD          #
+# Si la machine est déjà présente, on met  #
+# à jour l'heure                           #
+#                                          #
+############################################
+
+def insertmachine(machine, cursor):
+    cursor.execute("""SELECT ip FROM machines""")
+    rows = cursor.fetchall()
+    if (machine.ip,) not in rows:
+        try:
+            print colored('\tInsertion de la machine %s...' % machine.ip, 'blue')
             cursor.execute("""
-            INSERT INTO services(port, proto, banner, version, last_view) VALUES(?, ?, ?, ?, ?)""", (actuport, "proto", "banner", "2", "12:12:12 12/12/12"))
+            INSERT INTO machines(fqdn, ip, last_view) VALUES(?, ?, ?)""", ("labellemachine.a2s", machine.ip, machine.date))
+        except sqlite3.Error, e:
+            print colored('Error INSERT MACHINE %s:' % e.args[0], 'red')
+            sys.exit(2)
+    else:
+        try:
+            print colored('\tUpdate date de la machine %s...' % machine.ip, 'blue')
+            cursor.execute("""
+            UPDATE machines SET last_view = ? WHERE ip = ?""", (machine.date, machine.ip))
+        except sqlite3.Error, e:
+            print colored('Error UPDATE MACHINE %s:' % e.args[0], 'red')
+            sys.exit(2)
 
 print colored('Connexion a la BDD...', 'yellow')
 
@@ -82,12 +133,7 @@ print colored('Scan termine!\n', 'green')
 print colored('Analyse des machines...', 'yellow')
 
 for host in nm.all_hosts():
-
-    #print('------------------------------------')
-    #print('Host : %s' % host)
-    #print('State : %s' % nm[host].state())
     for proto in nm[host].all_protocols():
-        #print('Protocol : %s' % proto)
         lport = nm[host][proto].keys()
         lport.sort()
         mon_host = Host()
@@ -100,22 +146,17 @@ for host in nm.all_hosts():
 
 print colored('Analyse terminee!\n', 'green')
 
-print colored('Insertion dans la BDD...', 'yellow')
-for currenthost in listhost:
-    print('\n------------------------------------\n')
-    print('IP : %s' % currenthost.ip)
-    print('Port : %s' % currenthost.port)
-    print('Service : %s' % currenthost.nomservice)
-    print('Date : %s' % currenthost.date)
-    try:
-        cursor.execute("""
-        INSERT INTO machines(fqdn, ip, last_view) VALUES(?, ?, ?)""", ("labellemachine.a2s", currenthost.ip, currenthost.date))
-        bdd.commit()
-    except sqlite3.Error, e:
-        print colored('Error INSERT %s:' % e.args[0], 'red')
-        sys.exit(2)
-    insertport(currenthost.port, cursor)
-    print colored('Machine sauvegardee!', 'green')
+print colored('Insertion dans la BDD...\n', 'yellow')
 
-print colored('\nInsertion terminee', 'green')
+for currenthost in listhost:
+    insertmachine(currenthost, cursor)
+    insertport(currenthost.port, cursor)
+
+try:
+	bdd.commit()
+except sqlite3.Error, e:
+    print colored('Error COMMIT %s:' % e.args[0], 'red')
+    sys.exit(2)
+
+print colored('\nInsertion terminee!', 'green')
 bdd.close()
