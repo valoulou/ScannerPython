@@ -1,7 +1,10 @@
 from termcolor import colored
 from datetime import datetime
+import sys
 import nmap
 import sqlite3
+
+num_service=0
 
 class Host:
 
@@ -47,13 +50,23 @@ class Host:
     def date(self, d):
         self._date = d
 
+def insertport(listport, cursor):
+    cursor.execute("""SELECT port FROM services""")
+    rows = cursor.fetchall()
+    print(rows)
+    for actuport in listport:
+        if actuport not in rows:
+            print('Valeur non connu')
+            cursor.execute("""
+            INSERT INTO services(port, proto, banner, version, last_view) VALUES(?, ?, ?, ?, ?)""", (actuport, "proto", "banner", "2", "12:12:12 12/12/12"))
+
 print colored('Connexion a la BDD...', 'yellow')
 
 try:
     bdd=sqlite3.connect('scanner.db')
     cursor = bdd.cursor()
 except sqlite3.Error, e:
-    print "Error %s:" % e.args[0]
+    print colored('Error %s:' % e.args[0], 'red')
     sys.exit(1)
 
 print colored('Connexion reussi!\n', 'green')
@@ -88,20 +101,21 @@ for host in nm.all_hosts():
 print colored('Analyse terminee!\n', 'green')
 
 print colored('Insertion dans la BDD...', 'yellow')
-
 for currenthost in listhost:
     print('\n------------------------------------\n')
     print('IP : %s' % currenthost.ip)
     print('Port : %s' % currenthost.port)
     print('Service : %s' % currenthost.nomservice)
     print('Date : %s' % currenthost.date)
-    #try:
-    #    cursor.execute("""
-    #    INSERT INTO machines(fqdn, ip, last_view) VALUES(?, ?, ?)""", ("labellemachine.a2s", currenthost.ip, currenthost.date))
-    #except sqlite3.Error, e
-    #    print "Error INSERT %s:" % e.args[0]
-    #    sys.exit(2)
-    #print('Machine sauvegardee!')
+    try:
+        cursor.execute("""
+        INSERT INTO machines(fqdn, ip, last_view) VALUES(?, ?, ?)""", ("labellemachine.a2s", currenthost.ip, currenthost.date))
+        bdd.commit()
+    except sqlite3.Error, e:
+        print colored('Error INSERT %s:' % e.args[0], 'red')
+        sys.exit(2)
+    insertport(currenthost.port, cursor)
+    print colored('Machine sauvegardee!', 'green')
 
 print colored('\nInsertion terminee', 'green')
 bdd.close()
