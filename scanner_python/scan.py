@@ -1,5 +1,6 @@
-import nmap
+from termcolor import colored
 from datetime import datetime
+import nmap
 import sqlite3
 
 class Host:
@@ -46,11 +47,26 @@ class Host:
     def date(self, d):
         self._date = d
 
-print('Scan en cours...')
+print colored('Connexion a la BDD...', 'yellow')
+
+try:
+    bdd=sqlite3.connect('scanner.db')
+    cursor = bdd.cursor()
+except sqlite3.Error, e:
+    print "Error %s:" % e.args[0]
+    sys.exit(1)
+
+print colored('Connexion reussi!\n', 'green')
+
+print colored('Scan en cours...', 'yellow')
+
 listhost=[]
 nm = nmap.PortScanner()
 nm.scan('192.168.20.0/24', '22-443')
-print('\nAnalyse des machines...')
+
+print colored('Scan termine!\n', 'green')
+
+print colored('Analyse des machines...', 'yellow')
 
 for host in nm.all_hosts():
 
@@ -69,9 +85,23 @@ for host in nm.all_hosts():
             #print('port : %s\tstate : %s\tname : %s' % (port, nm[host][proto][port]['state'], nm[host][proto][port]['name']))
         listhost.append(mon_host)
 
+print colored('Analyse terminee!\n', 'green')
+
+print colored('Insertion dans la BDD...', 'yellow')
+
 for currenthost in listhost:
     print('\n------------------------------------\n')
     print('IP : %s' % currenthost.ip)
     print('Port : %s' % currenthost.port)
     print('Service : %s' % currenthost.nomservice)
     print('Date : %s' % currenthost.date)
+    #try:
+    #    cursor.execute("""
+    #    INSERT INTO machines(fqdn, ip, last_view) VALUES(?, ?, ?)""", ("labellemachine.a2s", currenthost.ip, currenthost.date))
+    #except sqlite3.Error, e
+    #    print "Error INSERT %s:" % e.args[0]
+    #    sys.exit(2)
+    #print('Machine sauvegardee!')
+
+print colored('\nInsertion terminee', 'green')
+bdd.close()
