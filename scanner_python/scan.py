@@ -21,20 +21,25 @@ class Host:
 
     def __init__(self):
         self._ip=''
-        self._port=[]
-        self._nomservice=[]
+        self._serv=[]
+        #self._port=[]
+        #self._nomservice=[]
         dateactu=datetime.now()
         self._date=str(dateactu.hour)+':'+str(dateactu.minute)+':'+str(dateactu.second)+' '+str(dateactu.day)+'/'+str(dateactu.month)+'/'+str(dateactu.year)
 
     @property
     def ip(self):
         return self._ip
-    @property
+    '''@property
     def port(self):
         return self._port
     @property
     def nomservice(self):
-        return self._nomservice
+        return self._nomservice'''
+    @property
+    def serv(self):
+        return self._serv
+    
     @property
     def date(self):
         return self._date
@@ -42,24 +47,56 @@ class Host:
     def ip(self, i):
         self._ip = i
 
-    @port.setter
+    '''@port.setter
     def port(self, p):
         self._port = p
 
     def appendport(self, p):
         self._port = self._port + [p]
-        return self._port
+        return self._port'''
 
-    @nomservice.setter
+    @serv.setter
+    def serv(self, s):
+        self._serv = p
+
+    def appendserv(self, s):
+        self._serv = self._serv + [s]
+        return self._serv
+
+    '''@nomservice.setter
     def nomservice(self, s):
         self._nomservice = s
 
     def appendservice(self, s):
         self._nomservice = self._nomservice + [s]
-        return self._nomservice
+        return self._nomservice'''
     @date.setter
     def date(self, d):
         self._date = d
+
+class Service:
+    def __init__(self):
+        self._port=0
+        self._nomservice=''
+        self._state=''
+    @property
+    def port(self):
+        return self._port
+    @property
+    def nomservice(self):
+        return self._nomservice
+    @property
+    def state(self):
+        return self._state
+    @port.setter
+    def port(self, p):
+        self._port = port
+    @nomservice.setter
+    def nomservice(self, n):
+        self._nomservice = n
+    @state.setter
+    def state(self, s):
+        self._state = s
 
 ################################################
 #                                              #
@@ -73,21 +110,21 @@ def insertport(listport, cursor):
     cursor.execute("""SELECT port FROM services""")
     rows = cursor.fetchall()
     for actuport in listport:
-        if (actuport,) not in rows:
+        if (actuport.port,) not in rows:
             try:
-                print colored('\tInsertion du port %s...' % actuport, 'blue')
+                print colored('\tInsertion du port %s...' % actuport.port, 'blue')
                 cursor.execute("""
-                INSERT INTO services(port, proto, banner, version, last_view) VALUES(?, ?, ?, ?, ?)""", (actuport, "proto", "banner", "2", "12:12:12 12/12/12"))
+                INSERT INTO services(port, proto, banner, version, last_view) VALUES(?, ?, ?, ?, ?)""", (actuport.port, actuport.nomservice, "banner", "2", "12:12:12 12/12/12"))
             except sqlite3.Error, e:
                 print colored('Error INSERT PORT %s:' % e.args[0], 'red')
-                sys.exit(2)
+                sys.exit(4)
 
 ############################################
 #                                          #
 # Fonction insermachine                    #
 # Insert les machines dans la BDD          #
-# Si la machine est déjà présente, on met  #
-# à jour l'heure                           #
+# Si la machine est deja presente, on met  #
+# a jour l heure                           #
 #                                          #
 ############################################
 
@@ -109,7 +146,7 @@ def insertmachine(machine, cursor):
             UPDATE machines SET last_view = ? WHERE ip = ?""", (machine.date, machine.ip))
         except sqlite3.Error, e:
             print colored('Error UPDATE MACHINE %s:' % e.args[0], 'red')
-            sys.exit(2)
+            sys.exit(3)
 
 print colored('Connexion a la BDD...', 'yellow')
 
@@ -126,7 +163,7 @@ print colored('Scan en cours...', 'yellow')
 
 listhost=[]
 nm = nmap.PortScanner()
-nm.scan('192.168.20.0/24', '22-443')
+nm.scan('192.168.10.254', '22-443')
 
 print colored('Scan termine!\n', 'green')
 
@@ -139,8 +176,12 @@ for host in nm.all_hosts():
         mon_host = Host()
         mon_host.ip=host
         for port in lport:
-            mon_host.appendport(port)
-            mon_host.appendservice(nm[host][proto][port]['name'])
+            print('ICI -> %s' % nm[host][proto][port]['name'])
+            servi = Service()
+            servi.nomservice=nm[host][proto][port]['name']
+            servi.port=port
+            mon_host.appendserv(servi)
+            #mon_host.appendservice(nm[host][proto][port]['name'])
             #print('port : %s\tstate : %s\tname : %s' % (port, nm[host][proto][port]['state'], nm[host][proto][port]['name']))
         listhost.append(mon_host)
 
@@ -150,13 +191,13 @@ print colored('Insertion dans la BDD...\n', 'yellow')
 
 for currenthost in listhost:
     insertmachine(currenthost, cursor)
-    insertport(currenthost.port, cursor)
+    insertport(currenthost.serv, cursor)
 
 try:
 	bdd.commit()
 except sqlite3.Error, e:
     print colored('Error COMMIT %s:' % e.args[0], 'red')
-    sys.exit(2)
+    sys.exit(5)
 
 print colored('\nInsertion terminee!', 'green')
 bdd.close()
