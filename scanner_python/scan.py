@@ -126,6 +126,10 @@ def insertmachine(machine, cursor):
             print colored('Error UPDATE MACHINE %s:' % e.args[0], 'red')
             sys.exit(3)
 
+if(len(sys.argv)<3):
+	print colored('Usage : scan.py @IP portdeb-portfin', 'red')
+	sys.exit(0)
+
 print colored('Connexion a la BDD...', 'yellow')
 
 try:
@@ -141,7 +145,7 @@ print colored('Scan en cours...', 'yellow')
 
 listhost=[]
 nm = nmap.PortScanner()
-nm.scan('192.168.10.254', '22-10000')
+nm.scan(sys.argv[1], sys.argv[2])
 
 print colored('Scan termine!\n', 'green')
 
