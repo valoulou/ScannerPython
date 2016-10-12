@@ -30,12 +30,6 @@ class Host:
     @property
     def ip(self):
         return self._ip
-    '''@property
-    def port(self):
-        return self._port
-    @property
-    def nomservice(self):
-        return self._nomservice'''
     @property
     def serv(self):
         return self._serv
@@ -47,14 +41,6 @@ class Host:
     def ip(self, i):
         self._ip = i
 
-    '''@port.setter
-    def port(self, p):
-        self._port = p
-
-    def appendport(self, p):
-        self._port = self._port + [p]
-        return self._port'''
-
     @serv.setter
     def serv(self, s):
         self._serv = p
@@ -62,14 +48,6 @@ class Host:
     def appendserv(self, s):
         self._serv = self._serv + [s]
         return self._serv
-
-    '''@nomservice.setter
-    def nomservice(self, s):
-        self._nomservice = s
-
-    def appendservice(self, s):
-        self._nomservice = self._nomservice + [s]
-        return self._nomservice'''
     @date.setter
     def date(self, d):
         self._date = d
@@ -114,7 +92,7 @@ def insertport(listport, cursor):
             try:
                 print colored('\tInsertion du port %s...' % actuport.port, 'blue')
                 cursor.execute("""
-                INSERT INTO services(port, proto, banner, version, last_view) VALUES(?, ?, ?, ?, ?)""", (actuport.port, actuport.nomservice, "banner", "2", "12:12:12 12/12/12"))
+                INSERT INTO services(port, proto, state, banner, version, last_view) VALUES(?, ?, ?, ?, ?, ?)""", (actuport.port, actuport.nomservice, actuport.state, "banner", "2", "12:12:12 12/12/12"))
             except sqlite3.Error, e:
                 print colored('Error INSERT PORT %s:' % e.args[0], 'red')
                 sys.exit(4)
@@ -163,7 +141,7 @@ print colored('Scan en cours...', 'yellow')
 
 listhost=[]
 nm = nmap.PortScanner()
-nm.scan('192.168.10.254', '22-443')
+nm.scan('192.168.10.254', '22-10000')
 
 print colored('Scan termine!\n', 'green')
 
@@ -180,9 +158,8 @@ for host in nm.all_hosts():
             servi = Service()
             servi.nomservice=nm[host][proto][port]['name']
             servi.port=port
+            servi.state=nm[host][proto][port]['state']
             mon_host.appendserv(servi)
-            #mon_host.appendservice(nm[host][proto][port]['name'])
-            #print('port : %s\tstate : %s\tname : %s' % (port, nm[host][proto][port]['state'], nm[host][proto][port]['name']))
         listhost.append(mon_host)
 
 print colored('Analyse terminee!\n', 'green')
