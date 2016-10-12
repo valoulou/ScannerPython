@@ -154,7 +154,6 @@ for host in nm.all_hosts():
         mon_host = Host()
         mon_host.ip=host
         for port in lport:
-            print('ICI -> %s' % nm[host][proto][port]['name'])
             servi = Service()
             servi.nomservice=nm[host][proto][port]['name']
             servi.port=port
