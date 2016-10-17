@@ -13,7 +13,7 @@ import sqlite3
 ############################################
 #                                          #
 # Classe Host definissant                  #
-# une machine (ip, port, service, date)    #
+# une machine (ip, service, fqdn, date)    #
 #                                          #
 ############################################
 
@@ -22,8 +22,7 @@ class Host:
     def __init__(self):
         self._ip=''
         self._serv=[]
-        #self._port=[]
-        #self._nomservice=[]
+        self._fqdn=''
         dateactu=datetime.now()
         self._date=str(dateactu.hour)+':'+str(dateactu.minute)+':'+str(dateactu.second)+' '+str(dateactu.day)+'/'+str(dateactu.month)+'/'+str(dateactu.year)
 
@@ -32,15 +31,19 @@ class Host:
         return self._ip
     @property
     def serv(self):
-        return self._serv
-    
+        return self._serv   
     @property
     def date(self):
         return self._date
+    @property
+    def fqdn(self):
+        return self._fqdn
     @ip.setter
     def ip(self, i):
         self._ip = i
-
+    @fqdn.setter
+    def ip(self, f):
+        self._fqdn = f
     @serv.setter
     def serv(self, s):
         self._serv = p
@@ -51,6 +54,13 @@ class Host:
     @date.setter
     def date(self, d):
         self._date = d
+
+############################################
+#                                          #
+# Classe Service definissant               #
+# un service (port, nom du service, state) #
+#                                          #
+############################################
 
 class Service:
     def __init__(self):
@@ -84,7 +94,7 @@ class Service:
 #                                              #
 ################################################
 
-def insertport(listport, cursor):
+def insertport(listport, date, cursor):
     cursor.execute("""SELECT port FROM services""")
     rows = cursor.fetchall()
     for actuport in listport:
@@ -92,7 +102,15 @@ def insertport(listport, cursor):
             try:
                 print colored('\tInsertion du port %s...' % actuport.port, 'blue')
                 cursor.execute("""
-                INSERT INTO services(port, proto, state, banner, version, last_view) VALUES(?, ?, ?, ?, ?, ?)""", (actuport.port, actuport.nomservice, actuport.state, "banner", "2", "12:12:12 12/12/12"))
+                INSERT INTO services(port, proto, state, banner, version, last_view) VALUES(?, ?, ?, ?, ?, ?)""", (actuport.port, actuport.nomservice, actuport.state, "banner", "2", date))
+            except sqlite3.Error, e:
+                print colored('Error INSERT PORT %s:' % e.args[0], 'red')
+                sys.exit(4)
+        else:
+            try:
+                print colored('\tUpdate du port %s...' % actuport.port, 'blue')
+                cursor.execute("""
+                UPDATE services SET last_view = ? WHERE port = ?""", (date, actuport.port))
             except sqlite3.Error, e:
                 print colored('Error INSERT PORT %s:' % e.args[0], 'red')
                 sys.exit(4)
@@ -113,7 +131,7 @@ def insertmachine(machine, cursor):
         try:
             print colored('\tInsertion de la machine %s...' % machine.ip, 'blue')
             cursor.execute("""
-            INSERT INTO machines(fqdn, ip, last_view) VALUES(?, ?, ?)""", ("labellemachine.a2s", machine.ip, machine.date))
+            INSERT INTO machines(fqdn, ip, last_view) VALUES(?, ?, ?)""", (machine.fqdn, machine.ip, machine.date))
         except sqlite3.Error, e:
             print colored('Error INSERT MACHINE %s:' % e.args[0], 'red')
             sys.exit(2)
@@ -152,11 +170,12 @@ print colored('Scan termine!\n', 'green')
 print colored('Analyse des machines...', 'yellow')
 
 for host in nm.all_hosts():
+    mon_host = Host()
+    mon_host.ip=host
+    mon_host.fqdn=nm[host].hostname()
     for proto in nm[host].all_protocols():
         lport = nm[host][proto].keys()
         lport.sort()
-        mon_host = Host()
-        mon_host.ip=host
         for port in lport:
             servi = Service()
             servi.nomservice=nm[host][proto][port]['name']
@@ -171,7 +190,7 @@ print colored('Insertion dans la BDD...\n', 'yellow')
 
 for currenthost in listhost:
     insertmachine(currenthost, cursor)
-    insertport(currenthost.serv, cursor)
+    insertport(currenthost.serv, currenthost.date, cursor)
 
 try:
 	bdd.commit()
