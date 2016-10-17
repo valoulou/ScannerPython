@@ -8,10 +8,7 @@ from termcolor import colored
 from datetime import datetime
 import sys
 import nmap
-#import sqlite3
-import mysql.connector
-
-#'20120618 10:34:09 AM'
+import sqlite3
 
 ############################################
 #                                          #
@@ -27,8 +24,7 @@ class Host:
         self._serv=[]
         self._fqdn=''
         dateactu=datetime.now()
-        #self._date=str(dateactu.hour)+':'+str(dateactu.minute)+':'+str(dateactu.second)+' '+str(dateactu.day)+'/'+str(dateactu.month)+'/'+str(dateactu.year)
-        self._date=str(dateactu.year)+'-'+str(dateactu.month)+'-'+str(dateactu.day)+' '+str(dateactu.hour)+':'+str(dateactu.minute)+':'+str(dateactu.second)
+        self._date=str(dateactu.hour)+':'+str(dateactu.minute)+':'+str(dateactu.second)+' '+str(dateactu.day)+'/'+str(dateactu.month)+'/'+str(dateactu.year)
 
     @property
     def ip(self):
@@ -105,20 +101,16 @@ def insertport(listport, date, cursor):
         if (actuport.port,) not in rows:
             try:
                 print colored('\tInsertion du port %s...' % actuport.port, 'blue')
-                #cursor.execute("""
-                #INSERT INTO services(port, proto, state, banner, version, last_view) VALUES(?, ?, ?, ?, ?, ?)""", (actuport.port, actuport.nomservice, actuport.state, "banner", "2", date))
                 cursor.execute("""
-                INSERT INTO services (port, proto, state, banner, version, last_view) VALUES(%s, %s, %s, %s, %s, %s)""", (actuport.port, actuport.nomservice, actuport.state, "banner", "2", date))
+                INSERT INTO services(port, proto, state, banner, version, last_view) VALUES(?, ?, ?, ?, ?, ?)""", (actuport.port, actuport.nomservice, actuport.state, "banner", "2", date))
             except sqlite3.Error, e:
                 print colored('Error INSERT PORT %s:' % e.args[0], 'red')
                 sys.exit(4)
         else:
             try:
                 print colored('\tUpdate du port %s...' % actuport.port, 'blue')
-                #cursor.execute("""
-                #UPDATE services SET last_view = ? WHERE port = ?""", (date, actuport.port))
                 cursor.execute("""
-                UPDATE services SET last_view = %s WHERE port = %s""", (date, actuport.port))
+                UPDATE services SET last_view = ? WHERE port = ?""", (date, actuport.port))
             except sqlite3.Error, e:
                 print colored('Error INSERT PORT %s:' % e.args[0], 'red')
                 sys.exit(4)
@@ -138,20 +130,16 @@ def insertmachine(machine, cursor):
     if (machine.ip,) not in rows:
         try:
             print colored('\tInsertion de la machine %s...' % machine.ip, 'blue')
-            #cursor.execute("""
-            #INSERT INTO machines(fqdn, ip, last_view) VALUES(?, ?, ?)""", (machine.fqdn, machine.ip, machine.date))
             cursor.execute("""
-            INSERT INTO machines(fqdn, ip, last_view) VALUES(%s, %s, %s)""", (machine.fqdn, machine.ip, machine.date))
+            INSERT INTO machines(fqdn, ip, last_view) VALUES(?, ?, ?)""", (machine.fqdn, machine.ip, machine.date))
         except sqlite3.Error, e:
             print colored('Error INSERT MACHINE %s:' % e.args[0], 'red')
             sys.exit(2)
     else:
         try:
             print colored('\tUpdate date de la machine %s...' % machine.ip, 'blue')
-            #cursor.execute("""
-            #UPDATE machines SET last_view = ? WHERE ip = ?""", (machine.date, machine.ip))
             cursor.execute("""
-            UPDATE machines SET last_view = %s WHERE ip = %s""", (machine.date, machine.ip))
+            UPDATE machines SET last_view = ? WHERE ip = ?""", (machine.date, machine.ip))
         except sqlite3.Error, e:
             print colored('Error UPDATE MACHINE %s:' % e.args[0], 'red')
             sys.exit(3)
@@ -163,8 +151,7 @@ if(len(sys.argv)<3):
 print colored('Connexion a la BDD...', 'yellow')
 
 try:
-    #bdd=sqlite3.connect('scanner.db')
-    bdd = mysql.connector.connect(host="127.0.0.1",user="scanner_user",password="user@pass", database="Scanner")
+    bdd=sqlite3.connect('scanner.db')
     cursor = bdd.cursor()
 except sqlite3.Error, e:
     print colored('Error %s:' % e.args[0], 'red')
