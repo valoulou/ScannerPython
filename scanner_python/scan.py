@@ -5,6 +5,7 @@
 ##########################
 
 from termcolor import colored
+from datetime import datetime
 import sys
 import nmap
 import time
@@ -57,7 +58,8 @@ class Host:
 ############################################
 #                                          #
 # Classe Service definissant               #
-# un service (port, nom du service, state) #
+# un service (port, nom du service, state, #
+# banner)                                  #
 #                                          #
 ############################################
 
@@ -66,6 +68,7 @@ class Service:
         self._port=0
         self._nomservice=''
         self._state=''
+        self._banner=''
     @property
     def port(self):
         return self._port
@@ -75,6 +78,9 @@ class Service:
     @property
     def state(self):
         return self._state
+    @property
+    def banner(self):
+        return self._banner
     @port.setter
     def port(self, p):
         self._port = port
@@ -84,6 +90,9 @@ class Service:
     @state.setter
     def state(self, s):
         self._state = s
+    @state.setter
+    def state(self, b):
+        self._banner = b
 
 ################################################
 #                                              #
@@ -94,28 +103,32 @@ class Service:
 ################################################
 
 def insertport(mid, listport, date, cursor):
-    #cursor.execute("""SELECT port FROM services""")
-    #rows = cursor.fetchall()
     rows = returnportmid(mid, cursor)
-    print rows
     for actuport in listport:
         if (actuport.port,) not in rows:
             try:
-                print colored('\tInsertion du port %s...' % actuport.port, 'blue')
+                print colored('\t\tInsertion du port %s...' % actuport.port, 'blue')
                 cursor.execute("""
-                INSERT INTO services (port, proto, state, banner, version, last_view) VALUES(%s, %s, %s, %s, %s, %s)""", (actuport.port, actuport.nomservice, actuport.state, "banner", "2", date))
+                INSERT INTO services (port, proto, state, banner, version, last_view) VALUES(%s, %s, %s, %s, %s, %s)""", (actuport.port, actuport.nomservice, actuport.state, actuport.banner, "2", date))
             except mysql.connector.Error, e:
                 print colored('Error INSERT PORT %s:' % e.args[0], 'red')
                 sys.exit(4)
-            association(mid, returnsid(actuport.port, cursor))
+            bdd.commit()
+            cursor.execute("""
+            SELECT MAX(sid) FROM services""")
+            lastsid = cursor.fetchone()
+            association(mid, lastsid)
+            bdd.commit()
         else:
             try:
-                print colored('\tUpdate du port %s...' % actuport.port, 'blue')
+                print colored('\t\tUpdate du port %s...' % actuport.port, 'blue')
                 cursor.execute("""
                 UPDATE services SET last_view = %s WHERE port = %s""", (date, actuport.port))
+                bdd.commit()
             except mysql.connector.Error, e:
-                print colored('Error INSERT PORT %s:' % e.args[0], 'red')
+                print colored('Error UDPATE PORT %s:' % e.args[0], 'red')
                 sys.exit(4)
+    print('\n')
 
 ############################################
 #                                          #
@@ -156,11 +169,9 @@ def insertmachine(machine, cursor):
 ############################################
 
 def association(Pmid, Psid):
-    print('MID -> %s' % Pmid)
-    print('SID -> %s' % Psid)
     try:
         cursor.execute("""
-        INSERT INTO association(mid, sid) VALUES(%d, %d)""", (Pmid[0], Psid[0]))
+        INSERT INTO association(mid, sid) VALUES(%s, %s)""", (int(Pmid[0]), int(Psid[0])))
     except mysql.connector.Error, e:
         print colored('Error INSERT ASSOCIATION %s:' % e.args[0], 'red')
 
@@ -219,7 +230,6 @@ def returnportmid(mid, cursor):
         format_strings = ','.join(['%s'] * len(listsid))
         if cursor.rowcount == 0:
             return []
-        #return truc
     except mysql.connector.Error, e:
         print colored('Error SELECT ALL SID %s:' % e.args[0], 'red')
         sys.exit(8)
@@ -227,21 +237,26 @@ def returnportmid(mid, cursor):
         placeholders= ', '.join([('%s')]*len(listsid))
         query = 'SELECT port FROM services WHERE sid IN ({})'.format(placeholders)
         cursor.execute(query, tuple(listsid))
-        listport = [item[0] for item in cursor.fetchall()]
-        print listport
-        return listport
+        return cursor.fetchall()
     except mysql.connector.Error, e:
         print colored('Error SELECT ALL PORT %s:' % e.args[0], 'red')
         sys.exit(8)
+
+############################################
+#                                          #
+# Programme principal                      #
+#                                          #
+############################################
 
 if(len(sys.argv)<3):
 	print colored('Usage : scan.py @IP portdeb-portfin', 'red')
 	sys.exit(0)
 
+startTime = datetime.now()
+
 print colored('Connexion a la BDD...', 'yellow')
 
 try:
-    #bdd=sqlite3.connect('scanner.db')
     bdd = mysql.connector.connect(host="127.0.0.1",user="scanner_user",password="user@pass", database="Scanner")
     cursor = bdd.cursor()
 except mysql.connector.Error, e:
@@ -254,7 +269,7 @@ print colored('Scan en cours...', 'yellow')
 
 listhost=[]
 nm = nmap.PortScanner()
-nm.scan(sys.argv[1], sys.argv[2])
+nm.scan(sys.argv[1], sys.argv[2], arguments='-sV -v -n -Pn --script banner')
 
 print colored('Scan termine!\n', 'green')
 
@@ -270,6 +285,10 @@ for host in nm.all_hosts():
         for port in lport:
             servi = Service()
             servi.nomservice=nm[host][proto][port]['name']
+            if 'script' in nm[host][proto][port]:
+                dic=nm[host][proto][port]['script']
+                scriptvalue=dic.values()
+                servi.banner=scriptvalue[0]
             servi.port=port
             servi.state=nm[host][proto][port]['state']
             mon_host.appendserv(servi)
@@ -291,3 +310,5 @@ except mysql.connector.Error, e:
 
 print colored('\nInsertion terminee!', 'green')
 bdd.close()
+
+print datetime.now() - startTime
