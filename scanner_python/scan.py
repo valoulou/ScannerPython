@@ -66,12 +66,16 @@ class Host:
 class Service:
     def __init__(self):
         self._port=0
+        self._version=''
         self._nomservice=''
         self._state=''
         self._banner=''
     @property
     def port(self):
         return self._port
+    @property
+    def version(self):
+        return self._version
     @property
     def nomservice(self):
         return self._nomservice
@@ -83,7 +87,10 @@ class Service:
         return self._banner
     @port.setter
     def port(self, p):
-        self._port = port
+        self._port = p
+    @version.setter
+    def version(self, v):
+        self._version = v
     @nomservice.setter
     def nomservice(self, n):
         self._nomservice = n
@@ -109,16 +116,16 @@ def insertport(mid, listport, date, cursor):
             try:
                 print colored('\t\tInsertion du port %s...' % actuport.port, 'blue')
                 cursor.execute("""
-                INSERT INTO services (port, proto, state, banner, version, last_view) VALUES(%s, %s, %s, %s, %s, %s)""", (actuport.port, actuport.nomservice, actuport.state, actuport.banner, "2", date))
+                INSERT INTO services (mid, port, proto, state, banner, version, last_view) VALUES(%s, %s, %s, %s, %s, %s, %s)""", (mid, actuport.port, actuport.nomservice, actuport.state, actuport.banner, actuport.version, date))
             except mysql.connector.Error, e:
                 print colored('Error INSERT PORT %s:' % e.args[0], 'red')
                 sys.exit(4)
             bdd.commit()
-            cursor.execute("""
-            SELECT MAX(sid) FROM services""")
-            lastsid = cursor.fetchone()
-            association(mid, lastsid)
-            bdd.commit()
+            #cursor.execute("""
+            #SELECT MAX(sid) FROM services""")
+            #lastsid = cursor.fetchone()
+            #association(mid, lastsid)
+            #bdd.commit()
         else:
             try:
                 print colored('\t\tUpdate du port %s...' % actuport.port, 'blue')
@@ -158,6 +165,7 @@ def insertmachine(machine, cursor):
         except mysql.connector.Error, e:
             print colored('Error UPDATE MACHINE %s:' % e.args[0], 'red')
             sys.exit(3)
+    bdd.commit()
 
 ############################################
 #                                          #
@@ -189,7 +197,8 @@ def returnmid(ip, cursor):
         SELECT mid
         FROM machines
         WHERE ip = '%s'""" % ip)
-        return cursor.fetchone()
+        result = cursor.fetchone()
+        return result[0]
     except mysql.connector.Error, e:
         print colored('Error SELECT MID %s:' % e.args[0], 'red')
         sys.exit(7)
@@ -223,23 +232,10 @@ def returnsid(port, cursor):
 def returnportmid(mid, cursor):
     try:
         cursor.execute("""
-        SELECT sid
-        FROM association
-        WHERE mid = '%s'""" % mid)
-        listsid = [item[0] for item in cursor.fetchall()]
-        format_strings = ','.join(['%s'] * len(listsid))
-        if cursor.rowcount == 0:
-            return []
-    except mysql.connector.Error, e:
-        print colored('Error SELECT ALL SID %s:' % e.args[0], 'red')
-        sys.exit(8)
-    try:
-        placeholders= ', '.join([('%s')]*len(listsid))
-        query = 'SELECT port FROM services WHERE sid IN ({})'.format(placeholders)
-        cursor.execute(query, tuple(listsid))
+        SELECT port FROM services WHERE mid = '%s'""" % mid)
         return cursor.fetchall()
     except mysql.connector.Error, e:
-        print colored('Error SELECT ALL PORT %s:' % e.args[0], 'red')
+        print colored('Error SELECT ALL SID %s:' % e.args[0], 'red')
         sys.exit(8)
 
 ############################################
@@ -265,11 +261,11 @@ except mysql.connector.Error, e:
 
 print colored('Connexion reussi!\n', 'green')
 
-print colored('Scan en cours...', 'yellow')
+print colored('Scan en cours... (%s)' % datetime.now(), 'yellow')
 
 listhost=[]
 nm = nmap.PortScanner()
-nm.scan(sys.argv[1], sys.argv[2], arguments='-sV -v -n -Pn --script banner')
+nm.scan(sys.argv[1], sys.argv[2], arguments='-sV --script banner')
 
 print colored('Scan termine!\n', 'green')
 
@@ -289,6 +285,9 @@ for host in nm.all_hosts():
                 dic=nm[host][proto][port]['script']
                 scriptvalue=dic.values()
                 servi.banner=scriptvalue[0]
+            if 'version' in nm[host][proto][port]:
+                v = nm[host][proto][port]['version']
+                servi.version = v
             servi.port=port
             servi.state=nm[host][proto][port]['state']
             mon_host.appendserv(servi)
