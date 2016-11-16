@@ -121,11 +121,6 @@ def insertport(mid, listport, date, cursor):
                 print colored('Error INSERT PORT %s:' % e.args[0], 'red')
                 sys.exit(4)
             bdd.commit()
-            #cursor.execute("""
-            #SELECT MAX(sid) FROM services""")
-            #lastsid = cursor.fetchone()
-            #association(mid, lastsid)
-            #bdd.commit()
         else:
             try:
                 print colored('\t\tUpdate du port %s...' % actuport.port, 'blue')
@@ -166,22 +161,6 @@ def insertmachine(machine, cursor):
             print colored('Error UPDATE MACHINE %s:' % e.args[0], 'red')
             sys.exit(3)
     bdd.commit()
-
-############################################
-#                                          #
-# Fonction asociation                      #
-# Defini l association entre une           #
-# machine et un port dans la table         #
-# association                              #
-#                                          #
-############################################
-
-def association(Pmid, Psid):
-    try:
-        cursor.execute("""
-        INSERT INTO association(mid, sid) VALUES(%s, %s)""", (int(Pmid[0]), int(Psid[0])))
-    except mysql.connector.Error, e:
-        print colored('Error INSERT ASSOCIATION %s:' % e.args[0], 'red')
 
 ############################################
 #                                          #
@@ -244,8 +223,7 @@ def returnportmid(mid, cursor):
 #                                          #
 ############################################
 
-def datestr():
-    tmp_time = datetime.now()
+def datestr(tmp_time):
     tmp_time = str(tmp_time.hour)+':'+str(tmp_time.minute)+':'+str(tmp_time.second)
     return tmp_time
 
@@ -261,7 +239,7 @@ if(len(sys.argv)<3):
 
 startTime = datetime.now()
 
-print colored('Connexion a la BDD... (%s)' % datestr(), 'yellow')
+print colored('Connexion a la BDD... (%s)' % datestr(datetime.now()), 'yellow')
 
 try:
     bdd = mysql.connector.connect(host="127.0.0.1",user="scanner_user",password="user@pass", database="Scanner")
@@ -270,17 +248,17 @@ except mysql.connector.Error, e:
     print colored('Error %s:' % e.args[0], 'red')
     sys.exit(1)
 
-print colored('Connexion reussi! (%s)\n' % datestr(), 'green')
+print colored('Connexion reussi! (%s)\n' % datestr(datetime.now()), 'green')
 
-print colored('Scan en cours... (%s)' % datestr(), 'yellow')
+print colored('Scan en cours... (%s)' % datestr(datetime.now()), 'yellow')
 
 listhost=[]
 nm = nmap.PortScanner()
 nm.scan(sys.argv[1], sys.argv[2], arguments='-sV --script banner')
 
-print colored('Scan termine!(%s)\n' % datestr(), 'green')
+print colored('Scan termine!(%s)\n' % datestr(datetime.now()), 'green')
 
-print colored('Analyse des machines...(%s)' % datestr(), 'yellow')
+print colored('Analyse des machines...(%s)' % datestr(datetime.now()), 'yellow')
 
 for host in nm.all_hosts():
     mon_host = Host()
@@ -304,9 +282,9 @@ for host in nm.all_hosts():
             mon_host.appendserv(servi)
         listhost.append(mon_host)
 
-print colored('Analyse terminee!(%s)\n' % datestr(), 'green')
+print colored('Analyse terminee!(%s)\n' % datestr(datetime.now()), 'green')
 
-print colored('Insertion dans la BDD...(%s)\n' % datestr(), 'yellow')
+print colored('Insertion dans la BDD...(%s)\n' % datestr(datetime.now()), 'yellow')
 
 for currenthost in listhost:
     insertmachine(currenthost, cursor)
@@ -318,7 +296,9 @@ except mysql.connector.Error, e:
     print colored('Error COMMIT %s:' % e.args[0], 'red')
     sys.exit(5)
 
-print colored('\nInsertion terminee!(%s)' % datestr(), 'green')
+print colored('\nInsertion terminee!(%s)' % datestr(datetime.now()), 'green')
 bdd.close()
 
-print datetime.now() - startTime
+temp_exec = datetime.now() - startTime
+
+print ('Temps d execution total : %s' % temp_exec)
