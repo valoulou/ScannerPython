@@ -26,7 +26,7 @@ class Host:
         self._serv=[]
         self._fqdn=''    
         self._date=time.strftime('%Y-%m-%d %H:%M:%S')
-       
+
     @property
     def ip(self):
         return self._ip
