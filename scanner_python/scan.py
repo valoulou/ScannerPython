@@ -237,6 +237,8 @@ if(len(sys.argv)<3):
 	print colored('Usage : scan.py @IP portdeb-portfin', 'red')
 	sys.exit(0)
 
+proto_yes=['tcp', 'udp']
+
 startTime = datetime.now()
 
 print colored('Connexion a la BDD... (%s)' % datestr(datetime.now()), 'yellow')
@@ -265,6 +267,8 @@ for host in nm.all_hosts():
     mon_host.ip=host
     mon_host.fqdn=nm[host].hostname()
     for proto in nm[host].all_protocols():
+        if proto not in proto_yes:
+            continue 
         lport = nm[host][proto].keys()
         lport.sort()
         for port in lport:
