@@ -12,3 +12,7 @@ td {
 border: thin solid #6495ed;
 width: 50%;
 }
+
+#mid:hover {
+background-color: #00ffff;
+  }
