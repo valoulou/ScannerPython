@@ -273,7 +273,6 @@ for host in nm.all_hosts():
         lport.sort()
         for port in lport:
             servi = Service()
-            print port
             servi.nomservice=nm[host][proto][port]['name']
             if 'script' in nm[host][proto][port]:
                 dic=nm[host][proto][port]['script']
