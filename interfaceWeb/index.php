@@ -28,8 +28,8 @@
           die($message);
       }
       ?>
-      <div>
-      <table id= "result" >
+
+      <table>
           <thead>
             <tr>
               <th>mid</th>
@@ -43,7 +43,7 @@
 
         <?php while ($row = mysql_fetch_assoc($result)) { ?>
           <tr>
-            <td onclick="addRowHandlers(this)";><?php echo htmlentities($row["mid"], ENT_QUOTES, "utf-8");?></td>
+            <td id="mid" onclick="addRowHandlers(this)";><?php echo htmlentities($row["mid"], ENT_QUOTES, "utf-8");?></td>
             <td><?php echo htmlentities($row["sid"], ENT_QUOTES, "utf-8");?></td>
             <td><?php echo htmlentities($row["port"], ENT_QUOTES, "utf-8");?></td>
             <td><?php echo htmlentities($row["state"], ENT_QUOTES, "utf-8");?></td>
@@ -53,7 +53,6 @@
         <?php } ?>
 
       </table>
-    </div>
 
       <?php
         mysql_close($bdd);

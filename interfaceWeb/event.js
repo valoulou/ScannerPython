@@ -1,3 +1,3 @@
 function addRowHandlers(laCellule) {
-    alert("yo");
+    alert("La valeur de la case: " + laCellule.innerHTML);
 }
