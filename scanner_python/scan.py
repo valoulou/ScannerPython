@@ -229,6 +229,51 @@ def datestr(tmp_time):
 
 ############################################
 #                                          #
+# Retourne une list d host configure       #
+# d'un point de vu structure               #
+#                                          #
+############################################
+
+def analyze(scanner):
+    listhost=[]
+    for host in nm.all_hosts():
+        mon_host = Host()
+        mon_host.ip=host
+        mon_host.fqdn=nm[host].hostname()
+        for proto in nm[host].all_protocols():
+            if proto not in proto_yes:
+                continue 
+            lport = nm[host][proto].keys()
+            lport.sort()
+            for port in lport:
+                servi = Service()
+                servi.nomservice=nm[host][proto][port]['name']
+                if 'script' in nm[host][proto][port]:
+                    dic=nm[host][proto][port]['script']
+                    scriptvalue=dic.values()
+                    servi.banner=scriptvalue[0]
+                if 'version' in nm[host][proto][port]:
+                    v = nm[host][proto][port]['version']
+                    servi.version = v
+                servi.port=port
+                servi.state=nm[host][proto][port]['state']
+                mon_host.appendserv(servi)
+        listhost.append(mon_host)
+    return listhost
+
+############################################
+#                                          #
+# Lance et retourne le resultat du scan    #
+#                                          #
+############################################
+
+def start_scan(ip, port):
+    nm = nmap.PortScanner()
+    nm.scan(ip, port, arguments='-sV --script banner')
+    return nm
+
+############################################
+#                                          #
 # Programme principal                      #
 #                                          #
 ############################################
@@ -254,37 +299,13 @@ print colored('Connexion reussi! (%s)\n' % datestr(datetime.now()), 'green')
 
 print colored('Scan en cours... (%s)' % datestr(datetime.now()), 'yellow')
 
-listhost=[]
-nm = nmap.PortScanner()
-nm.scan(sys.argv[1], sys.argv[2], arguments='-sV --script banner')
+nm = start_scan(sys.argv[1], sys.argv[2])
 
 print colored('Scan termine!(%s)\n' % datestr(datetime.now()), 'green')
 
 print colored('Analyse des machines...(%s)' % datestr(datetime.now()), 'yellow')
 
-for host in nm.all_hosts():
-    mon_host = Host()
-    mon_host.ip=host
-    mon_host.fqdn=nm[host].hostname()
-    for proto in nm[host].all_protocols():
-        if proto not in proto_yes:
-            continue 
-        lport = nm[host][proto].keys()
-        lport.sort()
-        for port in lport:
-            servi = Service()
-            servi.nomservice=nm[host][proto][port]['name']
-            if 'script' in nm[host][proto][port]:
-                dic=nm[host][proto][port]['script']
-                scriptvalue=dic.values()
-                servi.banner=scriptvalue[0]
-            if 'version' in nm[host][proto][port]:
-                v = nm[host][proto][port]['version']
-                servi.version = v
-            servi.port=port
-            servi.state=nm[host][proto][port]['state']
-            mon_host.appendserv(servi)
-        listhost.append(mon_host)
+listhost = analyze(nm)
 
 print colored('Analyse terminee!(%s)\n' % datestr(datetime.now()), 'green')
 
