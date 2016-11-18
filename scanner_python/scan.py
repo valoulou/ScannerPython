@@ -10,6 +10,7 @@ import sys
 import nmap
 import time
 import mysql.connector
+from threading import Thread
 
 ############################################
 #                                          #
@@ -234,7 +235,8 @@ def datestr(tmp_time):
 #                                          #
 ############################################
 
-def analyze(scanner):
+def analyze(nm):
+    print colored('Analyse des machines...(%s)' % datestr(datetime.now()), 'yellow')
     listhost=[]
     for host in nm.all_hosts():
         mon_host = Host()
@@ -259,7 +261,8 @@ def analyze(scanner):
                 servi.state=nm[host][proto][port]['state']
                 mon_host.appendserv(servi)
         listhost.append(mon_host)
-    return listhost
+    print colored('Analyse terminee!(%s)\n' % datestr(datetime.now()), 'green')
+    start_insert(listhost)
 
 ############################################
 #                                          #
@@ -268,9 +271,27 @@ def analyze(scanner):
 ############################################
 
 def start_scan(ip, port):
+    print colored('Scan en cours... (%s)' % datestr(datetime.now()), 'yellow')
     nm = nmap.PortScanner()
     nm.scan(ip, port, arguments='-sV --script banner')
-    return nm
+    print colored('Scan termine!(%s)\n' % datestr(datetime.now()), 'green')
+    analyze(nm)
+
+def start_insert(listhost):
+
+    print colored('Insertion dans la BDD...(%s)\n' % datestr(datetime.now()), 'yellow')
+
+    for currenthost in listhost:
+        insertmachine(currenthost, cursor)
+        insertport(returnmid(currenthost.ip, cursor), currenthost.serv, currenthost.date, cursor)
+
+    try:
+        bdd.commit()
+    except mysql.connector.Error, e:
+        print colored('Error COMMIT %s:' % e.args[0], 'red')
+        sys.exit(5)
+
+    print colored('\nInsertion terminee!(%s)' % datestr(datetime.now()), 'green')
 
 ############################################
 #                                          #
@@ -297,32 +318,17 @@ except mysql.connector.Error, e:
 
 print colored('Connexion reussi! (%s)\n' % datestr(datetime.now()), 'green')
 
-print colored('Scan en cours... (%s)' % datestr(datetime.now()), 'yellow')
+#thread1 = Thread(None, start_scan, None, ("192.168.10.1 192.168.10.50",sys.argv[2]), None) 
 
-nm = start_scan(sys.argv[1], sys.argv[2])
+#thread2 = Thread(None, start_scan, None, ("192.168.10.51 192.168.10.102",sys.argv[2]), None) 
 
-print colored('Scan termine!(%s)\n' % datestr(datetime.now()), 'green')
+#thread1.start()
 
-print colored('Analyse des machines...(%s)' % datestr(datetime.now()), 'yellow')
+#thread2.start()
 
-listhost = analyze(nm)
+start_scan("192.168.10.1 192.168.10.254", "22-443")
 
-print colored('Analyse terminee!(%s)\n' % datestr(datetime.now()), 'green')
-
-print colored('Insertion dans la BDD...(%s)\n' % datestr(datetime.now()), 'yellow')
-
-for currenthost in listhost:
-    insertmachine(currenthost, cursor)
-    insertport(returnmid(currenthost.ip, cursor), currenthost.serv, currenthost.date, cursor)
-
-try:
-	bdd.commit()
-except mysql.connector.Error, e:
-    print colored('Error COMMIT %s:' % e.args[0], 'red')
-    sys.exit(5)
-
-print colored('\nInsertion terminee!(%s)' % datestr(datetime.now()), 'green')
-bdd.close()
+#bdd.close()
 
 temp_exec = datetime.now() - startTime
 
