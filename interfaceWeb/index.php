@@ -13,15 +13,14 @@
 
       <?php
 
-      $bdd = mysql_connect('192.168.10.33:3306', 'scanner_web', 'web@pass');
+      $bdd = new PDO('mysql:host=localhost;dbname=Scanner', 'scanner_web', 'web@pass');
       if (!$bdd) {
           die('Connexion impossible : ' . mysql_error());
       }
       echo "Connecte correctement <br>";
 
-      $db_selected = mysql_select_db('Scanner', $bdd);
-
-      $result = mysql_query("SELECT mid, sid, port, state, version, last_view  FROM services WHERE state = 'open'");
+      $result = $bdd->query ("SELECT mid, sid, port, state, version, last_view  FROM services WHERE state = 'open'");
+      $result->setFetchMode(PDO::FETCH_ASSOC);
 
       if (!$result) {
           $message  = 'Requête invalide : ' . mysql_error() . "\n";
@@ -41,7 +40,7 @@
             </tr>
           </thead>
 
-        <?php while ($row = mysql_fetch_assoc($result)) { ?>
+        <?php while ($row = $result->fetch()) { ?>
           <tr>
             <td id="mid" onclick="addRowHandlers(this)";><?php echo htmlentities($row["mid"], ENT_QUOTES, "utf-8");?></td>
             <td><?php echo htmlentities($row["sid"], ENT_QUOTES, "utf-8");?></td>
