@@ -1,0 +1,18 @@
+table {
+border: medium solid #000000;
+width: 50%;
+}
+
+th {
+border: thin solid #ff0000;
+width: 50%;
+}
+
+td {
+border: thin solid #6495ed;
+width: 50%;
+}
+
+#mid:hover {
+background-color: #00ffff;
+  }
