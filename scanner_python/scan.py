@@ -236,6 +236,7 @@ def datestr(tmp_time):
 ############################################
 
 def analyze(nm):
+    proto_yes=['tcp', 'udp']
     print colored('Analyse des machines...(%s)' % datestr(datetime.now()), 'yellow')
     listhost=[]
     for host in nm.all_hosts():
@@ -274,6 +275,8 @@ def start_scan(ip, port):
     print colored('Scan en cours... (%s)' % datestr(datetime.now()), 'yellow')
     nm = nmap.PortScanner()
     nm.scan(ip, port, arguments='-sV --script banner')
+    #nm.scan(ip, port, arguments='--max-parallelism=100 -T5 --max-hostgroup=256 --script banner -sV')
+
     print colored('Scan termine!(%s)\n' % datestr(datetime.now()), 'green')
     analyze(nm)
 
@@ -303,8 +306,6 @@ if(len(sys.argv)<3):
 	print colored('Usage : scan.py @IP portdeb-portfin', 'red')
 	sys.exit(0)
 
-proto_yes=['tcp', 'udp']
-
 startTime = datetime.now()
 
 print colored('Connexion a la BDD... (%s)' % datestr(datetime.now()), 'yellow')
@@ -318,17 +319,9 @@ except mysql.connector.Error, e:
 
 print colored('Connexion reussi! (%s)\n' % datestr(datetime.now()), 'green')
 
-#thread1 = Thread(None, start_scan, None, ("192.168.10.1 192.168.10.50",sys.argv[2]), None) 
+start_scan(sys.argv[1], sys.argv[2])
 
-#thread2 = Thread(None, start_scan, None, ("192.168.10.51 192.168.10.102",sys.argv[2]), None) 
-
-#thread1.start()
-
-#thread2.start()
-
-start_scan("192.168.10.1 192.168.10.254", "22-443")
-
-#bdd.close()
+bdd.close()
 
 temp_exec = datetime.now() - startTime
 
