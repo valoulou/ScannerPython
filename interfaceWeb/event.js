@@ -1,3 +1,11 @@
 function addRowHandlers(laCellule) {
-    alert("La valeur de la case: " + laCellule.innerHTML);
+
+    request = $.ajax({
+    	 url: 'script.php',
+         data: {mid: laCellule.innerHTML},
+         type: 'post',
+         success: function(output) {
+                      alert(output);
+                  }
+	});
 }
