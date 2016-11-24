@@ -132,7 +132,10 @@ def insertport(mid, listport, date, cursor):
                 print colored('Error UDPATE PORT %s:' % e.args[0], 'red')
                 sys.exit(4)
 
-            checkversion(actuport.version, actuport.port, mid, cursor)
+            check_element_service("proto", actuport.nomservice, actuport.port, mid, cursor)
+            check_element_service("state", actuport.state, actuport.port, mid, cursor)
+            check_element_service("banner", actuport.banner, actuport.port, mid, cursor)
+            check_element_service("version", actuport.version, actuport.port, mid, cursor)
 
     print('\n')
 
@@ -143,15 +146,16 @@ def insertport(mid, listport, date, cursor):
 #                                          #
 ############################################
 
-def checkversion(version, port, mid, cursor):
+def check_element_service(check, newval, port, mid, cursor):
     try:
-        cursor.execute("""SELECT version FROM services WHERE mid = '%s' AND port = '%s'""", (mid, port))
+        query = 'SELECT '+check+' FROM services WHERE mid = '+str(mid)+' AND port = '+str(port)
+        cursor.execute(query)
         result = cursor.fetchone()    
-        if result[0] == version:
+        if result[0] == newval:
             return
-        print colored('\t\t\tUpdate de la version...', 'blue')
-        cursor.execute("""
-        UPDATE services SET version = %s WHERE port = %s AND mid = %s""", (version, port, mid))
+        print colored('\t\t\tUpdate %s...' % check, 'blue')
+        query = 'UPDATE services SET '+check+' = "'+newval+'" WHERE port = '+str(port)+' AND mid = '+str(mid)
+        cursor.execute(query)
         bdd.commit()
     except mysql.connector.Error, e:
         print colored('Error UDPATE PORT CHECK VERSION %s:' % e.args[0], 'red')
