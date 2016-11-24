@@ -126,12 +126,36 @@ def insertport(mid, listport, date, cursor):
             try:
                 print colored('\t\tUpdate du port %s...' % actuport.port, 'blue')
                 cursor.execute("""
-                UPDATE services SET last_view = %s WHERE port = %s""", (date, actuport.port))
+                UPDATE services SET last_view = %s WHERE port = %s AND mid = %s""", (date, actuport.port, mid))
                 bdd.commit()
             except mysql.connector.Error, e:
                 print colored('Error UDPATE PORT %s:' % e.args[0], 'red')
                 sys.exit(4)
+
+            checkversion(actuport.version, actuport.port, mid, cursor)
+
     print('\n')
+
+############################################
+#                                          #
+# Verifie si la version est differente     #
+# avec la bdd                              #
+#                                          #
+############################################
+
+def checkversion(version, port, mid, cursor):
+    try:
+        cursor.execute("""SELECT version FROM services WHERE mid = '%s' AND port = '%s'""", (mid, port))
+        result = cursor.fetchone()    
+        if result[0] == version:
+            return
+        print colored('\t\t\tUpdate de la version...', 'blue')
+        cursor.execute("""
+        UPDATE services SET version = %s WHERE port = %s AND mid = %s""", (version, port, mid))
+        bdd.commit()
+    except mysql.connector.Error, e:
+        print colored('Error UDPATE PORT CHECK VERSION %s:' % e.args[0], 'red')
+        sys.exit(4)
 
 ############################################
 #                                          #
@@ -274,11 +298,22 @@ def analyze(nm):
 def start_scan(ip, port):
     print colored('Scan en cours... (%s)' % datestr(datetime.now()), 'yellow')
     nm = nmap.PortScanner()
-    nm.scan(ip, port, arguments='-sV --script banner')
-    #nm.scan(ip, port, arguments='--max-parallelism=100 -T5 --max-hostgroup=256 --script banner -sV')
+    #nm.scan(ip, port, arguments='-sV --script banner')
+
+    if port == 'all':
+        nm.scan(ip, arguments='-p- --max-parallelism=100 -T5 --max-hostgroup=256 --script banner -sV')
+    else:
+        nm.scan(ip, port, arguments='--max-parallelism=100 -T5 --max-hostgroup=256 --script banner -sV')
+    
 
     print colored('Scan termine!(%s)\n' % datestr(datetime.now()), 'green')
     analyze(nm)
+
+############################################
+#                                          #
+# Lance l insertion dans la base de donnees#
+#                                          #
+############################################
 
 def start_insert(listhost):
 
@@ -288,11 +323,11 @@ def start_insert(listhost):
         insertmachine(currenthost, cursor)
         insertport(returnmid(currenthost.ip, cursor), currenthost.serv, currenthost.date, cursor)
 
-    try:
-        bdd.commit()
-    except mysql.connector.Error, e:
-        print colored('Error COMMIT %s:' % e.args[0], 'red')
-        sys.exit(5)
+   # try:
+    #    bdd.commit()
+    #except mysql.connector.Error, e:
+    #    print colored('Error COMMIT %s:' % e.args[0], 'red')
+    #    sys.exit(5)
 
     print colored('\nInsertion terminee!(%s)' % datestr(datetime.now()), 'green')
 
