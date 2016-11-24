@@ -10,7 +10,11 @@ import sys
 import nmap
 import time
 import mysql.connector
-from threading import Thread
+import smtplib
+from email.MIMEMultipart import MIMEMultipart
+from email.MIMEText import MIMEText
+from email.MIMEBase import MIMEBase
+from email import encoders
 
 ############################################
 #                                          #
@@ -232,8 +236,8 @@ def returnsid(port, cursor):
 ############################################
 #                                          #
 # Fonction returnportmid                   #
-# Retourne les port en fonction d'une      #
-# adresse ip                               #
+# Retourne les port en fonction du mid     #
+#                                          #
 #                                          #
 ############################################
 
@@ -326,14 +330,68 @@ def start_insert(listhost):
     for currenthost in listhost:
         insertmachine(currenthost, cursor)
         insertport(returnmid(currenthost.ip, cursor), currenthost.serv, currenthost.date, cursor)
-
-   # try:
-    #    bdd.commit()
-    #except mysql.connector.Error, e:
-    #    print colored('Error COMMIT %s:' % e.args[0], 'red')
-    #    sys.exit(5)
-
     print colored('\nInsertion terminee!(%s)' % datestr(datetime.now()), 'green')
+
+############################################
+#                                          #
+# Enregistre les resultats de la BDD       #
+# dans un fichier                          #
+#                                          #
+############################################
+
+def result_to_text_file(temptotal, cursor):
+    sqlmachine = """SELECT DISTINCT ip FROM machines"""
+    file = open("result.txt", "w")
+    cursor.execute(sqlmachine)
+    machine = cursor.fetchall()
+    for rowmac in machine:
+        file.write(rowmac[0]+' : \n')
+        mid = returnmid(rowmac[0], cursor)
+        sqlservice = 'SELECT DISTINCT port, proto, banner, version FROM services WHERE mid = '+str(mid)
+        cursor.execute(sqlservice)
+        service = cursor.fetchall()
+        for rowserv in service:
+            file.write('\t\t'+str(rowserv[0])+'\t'+rowserv[1]+'\t'+rowserv[2]+'\t'+str(rowserv[3])+'\t'+'\n')
+
+    file.write("\n\nTemps total de l'execution : "+str(temptotal))
+    file.close()
+
+############################################
+#                                          #
+# Envoi le contenu de la BDD par mail      #
+#                                          #
+############################################
+
+def send_result_mail(reseau):
+    fromaddr = "trashliam39@gmail.com"
+    toaddr = ['valentin.chaigneau@gmail.com', 'trashliam39@gmail.com']
+ 
+    msg = MIMEMultipart()
+ 
+    msg['From'] = fromaddr
+    msg['To'] = ", ".join(toaddr)
+    msg['Subject'] = "Resultat script"
+ 
+    body = "Yolo, je suis le script python et voici les resultats pour le reseau "+reseau
+ 
+    msg.attach(MIMEText(body, 'plain'))
+ 
+    filename = "result.txt"
+    attachment = open("./result.txt", "rb")
+ 
+    part = MIMEBase('application', 'octet-stream')
+    part.set_payload((attachment).read())
+    encoders.encode_base64(part)
+    part.add_header('Content-Disposition', "attachment; filename= %s" % filename)
+ 
+    msg.attach(part)
+ 
+    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server.starttls()
+    server.login(fromaddr, "J@j&Comp.")
+    text = msg.as_string()
+    server.sendmail(fromaddr, toaddr, text)
+    server.quit()
 
 ############################################
 #                                          #
@@ -360,8 +418,12 @@ print colored('Connexion reussi! (%s)\n' % datestr(datetime.now()), 'green')
 
 start_scan(sys.argv[1], sys.argv[2])
 
-bdd.close()
-
 temp_exec = datetime.now() - startTime
 
 print ('Temps d execution total : %s' % temp_exec)
+
+result_to_text_file(temp_exec, cursor)
+
+send_result_mail(sys.argv[1])
+
+bdd.close()
