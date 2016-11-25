@@ -309,9 +309,11 @@ def start_scan(ip, port):
     #nm.scan(ip, port, arguments='-sV --script banner')
 
     if port == 'all':
-        nm.scan(ip, arguments='-p- --max-parallelism=100 -T5 --max-hostgroup=256 --script banner -sV')
+        #nm.scan(ip, arguments='-p- --max-parallelism=100 -T5 --max-hostgroup=256 --script banner -sV')
+        nm.scan(ip, arguments='-sV --script banner -p-')
     else:
-        nm.scan(ip, port, arguments='--max-parallelism=100 -T5 --max-hostgroup=256 --script banner -sV')
+        nm.scan(ip, port, arguments='-sV --script banner')
+        #nm.scan(ip, port, arguments='--max-parallelism=100 -T5 --max-hostgroup=256 --script banner -sV')
     
 
     print colored('Scan termine!(%s)\n' % datestr(datetime.now()), 'green')
@@ -364,7 +366,8 @@ def result_to_text_file(temptotal, cursor):
 
 def send_result_mail(reseau):
     fromaddr = "trashliam39@gmail.com"
-    toaddr = ['valentin.chaigneau@gmail.com', 'trashliam39@gmail.com']
+    #toaddr = ['valentin.chaigneau@gmail.com', 'dupin.raphael@gmail.com', 'aurelien.bourillon@gmail.com']
+    toaddr = ['valentin.chaigneau@gmail.com']
  
     msg = MIMEMultipart()
  

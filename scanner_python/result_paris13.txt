@@ -1,0 +1,852 @@
+81.194.43.1 : 
+		80	http	Microsoft-IIS/10.0	10.0	
+		1801	msmq			
+		2103	msrpc			
+		2105	msrpc			
+		2107	msrpc			
+		4000	remoteanything			
+		7680	pando-pub			
+		49669	msrpc			
+81.194.43.101 : 
+		80	http	Microsoft-IIS/7.5	7.5	
+		135	msrpc			
+		445	microsoft-ds			
+		1801	msmq			
+		2103	msrpc			
+		2105	msrpc			
+		2107	msrpc			
+		49154	msrpc			
+		49156	msrpc			
+81.194.43.102 : 
+		20031	unknown			
+81.194.43.103 : 
+		135	msrpc			
+		443	http	Microsoft-IIS/7.5	7.5	
+		3389	ms-wbt-server			
+		49154	msrpc			
+81.194.43.105 : 
+		25	smtp			
+		443	https	10.0.5.28		
+		515	printer			
+		631	ipp			
+		2812	tcpwrapped			
+		9100	jetdirect			
+		20031	unknown			
+		60022	ssh	SSH-2.0-OpenSSH_5.3	5.3	
+81.194.43.108 : 
+		22	ssh	SSH-2.0-OpenSSH_5.3	5.3	
+		25	smtp			
+		80	http			
+		111	rpcbind	
+  program version   port/proto  service
+  100000  2,3,4        111/tcp  rpcbind
+  100000  2,3,4        111/udp  rpcbind
+	2-4	
+		443	http	Apache		
+		515	printer			
+		631	ipp			
+		4369	epmd			
+		9100	jetdirect			
+		15672	http	MochiWeb/1.0 (Any of you quaids got a smint?)	1.0	
+		55672	http	MochiWeb/1.0 (Any of you quaids got a smint?)	1.0	
+81.194.43.111 : 
+		53	domain			
+		80	http			
+		113	ident			
+		443	https			
+81.194.43.114 : 
+		53	domain			
+		80	http			
+		113	ident			
+		443	https			
+81.194.43.118 : 
+		80	http	nginx/0.7.65	0.7.65	
+		443	http	nginx/0.7.65	0.7.65	
+		1935	rtmp			
+		9123	grcp			
+81.194.43.122 : 
+		80	http	Apache		
+		443	http	Apache		
+		20031	unknown			
+		60022	ssh	SSH-2.0-OpenSSH_4.3	4.3	
+81.194.43.128 : 
+		25	smtp			
+		80	http	Apache/2.2.14 (Ubuntu)	2.2.14	
+		515	printer			
+		631	ipp			
+		1984	bigbrother	BaseX:50414403086996669\x00		
+		8984	http	Jetty(8.1.18.v20150929)	8.1.18.v20150929	
+		8985	tcpwrapped			
+		9100	jetdirect			
+		60022	ssh	SSH-2.0-OpenSSH_5.3p1 Debian-3ubuntu7	5.3p1 Debian 3ubuntu7	
+81.194.43.129 : 
+		22	ssh	SSH-2.0-OpenSSH_6.6p1-hpn14v4	6.6p1	
+		25	smtp			
+		80	http	Apache		
+		81	websocket			
+		444	http	Apache		
+		500	isakmp			
+		515	printer			
+		631	ipp			
+		3389	ms-wbt-server			
+		5444	postgresql		8.3.20 - 8.3.23	
+		8081	websocket			
+		9100	jetdirect			
+		24007	rpcbind			
+		24009	rpcbind			
+		27605				
+81.194.43.130 : 
+		80	http	Apache/2.4.7 (Ubuntu)	2.4.7	
+		443	https			
+		8000	http-alt			
+		8080	http-proxy			
+		11022	ssh	SSH-2.0-OpenSSH_6.6.1p1 Ubuntu-2ubuntu2.4	6.6.1p1 Ubuntu 2ubuntu2.4	
+81.194.43.131 : 
+		25	smtp			
+		135	msrpc			
+		137	netbios-ns			
+		138	netbios-dgm			
+		139	netbios-ssn			
+		445	microsoft-ds			
+		515	printer			
+		631	ipp			
+		1110	nfsd-status			
+		2869	icslap			
+		3389	ms-wbt-server			
+		5357	http	Microsoft-HTTPAPI/2.0	2.0	
+		9100	jetdirect			
+		19780	unknown			
+		49664	msrpc			
+		49665	msrpc			
+		49666	msrpc			
+		49667	msrpc			
+		49708	msrpc			
+		49717	msrpc			
+81.194.43.133 : 
+		22	ssh	SSH-2.0-OpenSSH_4.7p1 Debian-8ubuntu1.2	4.7p1 Debian 8ubuntu1.2	
+		25	smtp			
+		515	printer			
+		631	ipp			
+		9100	jetdirect			
+81.194.43.134 : 
+		25	smtp			
+		80	http	Apache/2.2.15 (CentOS)	2.2.15	
+		515	printer			
+		631	ipp			
+		3306	mysql	_\x00\x00\x00\xFFj\x04Host 'LFbn-1-9600-249.w86-236.abo.wanadoo
+.fr' is not allowed to connect to this MySQL server		
+		9100	jetdirect			
+		20031	unknown			
+		60022	ssh	SSH-2.0-OpenSSH_5.3	5.3	
+81.194.43.146 : 
+		80	http	Microsoft-IIS/7.5	7.5	
+		135	msrpc			
+		445	microsoft-ds			
+		3389	ms-wbt-server			
+		5666	nrpe			
+		8014	http	Microsoft-IIS/7.5	7.5	
+		8443	https-alt	Hidden		
+		9090	zeus-admin			
+		12489	tcpwrapped			
+		49154	msrpc			
+81.194.43.147 : 
+		25	smtp			
+		80	http	Microsoft-IIS/6.0	6.0	
+		135	msrpc			
+		139	netbios-ssn			
+		445	microsoft-ds			
+		515	printer			
+		631	ipp			
+		1025	msrpc			
+		1131	msrpc			
+		3389	ms-wbt-server			
+		5666	nrpe			
+		8014	http	Microsoft-IIS/6.0	6.0	
+		9100	jetdirect			
+		12489	tcpwrapped			
+		47001	http			
+81.194.43.154 : 
+		443	http	Apache		
+		20031	unknown			
+81.194.43.155 : 
+		80	http	Apache		
+		443	http	Apache		
+		60022	ssh	SSH-2.0-OpenSSH_5.3	5.3	
+81.194.43.156 : 
+		25	smtp			
+		80	http	nginx		
+		443	http	nginx		
+		515	printer			
+		631	ipp			
+		8139	http	WEBrick/1.3.1 (Ruby/2.0.0/2014-11-13) OpenSSL/1.0.1e	1.3.1	
+		9100	jetdirect			
+		10050	tcpwrapped			
+		20031	unknown			
+		60022	ssh	SSH-2.0-OpenSSH_6.6.1	6.6.1	
+81.194.43.157 : 
+		53	domain			
+		389	ldap		2.2.X - 2.3.X	
+		1812	tcpwrapped			
+		1813	tcpwrapped			
+		5432	postgresql			
+		20031	unknown			
+81.194.43.178 : 
+		21	ftp	220 ProFTPD 1.3.3d Server (Hebergements) [81.194.43.178]	1.3.3d	
+		80	http	Apache		
+		443	http	Apache		
+		20031	unknown			
+81.194.43.185 : 
+		22	ssh	SSH-2.0-OpenSSH_5.3p1 Debian-3ubuntu7.1	5.3p1 Debian 3ubuntu7.1	
+		25	smtp			
+		80	http	Apache/2.2.14 (Ubuntu)	2.2.14	
+		515	printer			
+		631	ipp			
+		9100	jetdirect			
+81.194.43.188 : 
+		25	smtp			
+		515	printer			
+		631	ipp			
+		9100	jetdirect			
+		60022	ssh	SSH-2.0-OpenSSH_6.9	6.9	
+81.194.43.199 : 
+		25	smtp			
+		515	printer			
+		631	ipp			
+		2812	tcpwrapped			
+		8139	http	WEBrick/1.3.1 (Ruby/1.8.7/2013-06-27) OpenSSL/1.0.1e	1.3.1	
+		9100	jetdirect			
+		10050	tcpwrapped			
+		37452	tcpwrapped			
+		60022	ssh	SSH-2.0-OpenSSH_5.3	5.3	
+81.194.43.20 : 
+		22	ssh	SSH-2.0-OpenSSH_6.7p1 Debian-5+deb8u2	6.7p1 Debian 5+deb8u2	
+		25	smtp			
+		111	rpcbind		2-4	
+		515	printer			
+		631	ipp			
+		2049	nfs		2-4	
+		9100	jetdirect			
+		36413	mountd		1-3	
+		45732	mountd		1-3	
+		47245	status		1	
+		56074	nlockmgr		1-4	
+		58463	mountd		1-3	
+81.194.43.200 : 
+		53	domain			
+		80	http-proxy		1.3.1 or later	
+		389	ldap		2.2.X - 2.3.X	
+		443	http	Apache		
+		1812	tcpwrapped			
+		1813	tcpwrapped			
+		5432	postgresql			
+		8443	http	Apache		
+		8843	http	Apache		
+		20031	unknown			
+81.194.43.201 : 
+		53	domain			
+		80	http-proxy		1.3.1 or later	
+		389	ldap		2.2.X - 2.3.X	
+		443	http	Apache		
+		1812	tcpwrapped			
+		1813	tcpwrapped			
+		5432	postgresql			
+		8443	http	Apache		
+		8843	http	Apache		
+		20031	unknown			
+81.194.43.202 : 
+		53	domain			
+		1812	tcpwrapped			
+		1813	tcpwrapped			
+		5432	postgresql			
+		20031	unknown			
+81.194.43.203 : 
+		53	domain			
+		1812	tcpwrapped			
+		1813	tcpwrapped			
+		3306	mysql	Yx00x00x00x0A5.5.5-10.1.16-MariaDBx00ZxDB,x00O;wi)/Ltx0
+0xFFxF7x08x02x00?xA0x15x00x00x00x00x00x00x00x00x00x...
+	5.5.5-10.1.16-MariaDB	
+		5432	postgresql			
+		20031	unknown			
+81.194.43.204 : 
+		53	domain			
+		1812	tcpwrapped			
+		1813	tcpwrapped			
+		5432	postgresql			
+		20031	unknown			
+81.194.43.206 : 
+		53	domain			
+		80	http-proxy		1.3.1 or later	
+		443	http	Apache		
+		1812	tcpwrapped			
+		1813	tcpwrapped			
+		5432	postgresql			
+		20031	unknown			
+81.194.43.207 : 
+		53	domain			
+		80	http-proxy		1.3.1 or later	
+		443	http	Apache		
+		1812	tcpwrapped			
+		1813	tcpwrapped			
+		5432	postgresql			
+		20031	unknown			
+81.194.43.208 : 
+		25	smtp			
+		80	http	Apache		
+		515	printer			
+		631	ipp			
+		2812	tcpwrapped			
+		8139	http	WEBrick/1.3.1 (Ruby/1.8.7/2013-06-27) OpenSSL/1.0.1e	1.3.1	
+		9100	jetdirect			
+		10050	tcpwrapped			
+		20031	unknown			
+		60021	ftp	220 FTP Server ready.		
+		60022	ssh	SSH-2.0-OpenSSH_5.3	5.3	
+81.194.43.209 : 
+		22	ssh	SSH-2.0-OpenSSH_5.9p1 Debian-5ubuntu1.4	5.9p1 Debian 5ubuntu1.4	
+		25	smtp			
+		80	http	Apache/2.2.22 (Ubuntu)	2.2.22	
+		515	printer			
+		631	ipp			
+		9100	jetdirect			
+81.194.43.211 : 
+		25	smtp			
+		515	printer			
+		631	ipp			
+		5900	vnc			
+		8080	http	Mbedthis-Appweb/2.4.2	2.4.2	
+		8443	http	Mbedthis-Appweb/2.4.2	2.4.2	
+		9100	jetdirect			
+		60022	ssh	SSH-2.0-OpenSSH_5.2	5.2	
+81.194.43.212 : 
+		80	http	Apache-Coyote/1.1	1.1	
+		443	http	Apache-Coyote/1.1	1.1	
+		20031	unknown			
+81.194.43.214 : 
+		22	ssh	SSH-2.0-OpenSSH_6.7p1 Debian-5+deb8u1	6.7p1 Debian 5+deb8u1	
+		25	smtp			
+		80	http	Apache/2.4.10 (Debian)	2.4.10	
+		111	rpcbind	
+  program version   port/proto  service
+  100000  2,3,4        111/tcp  rpcbind
+  100000  2,3,4        111/udp  rpcbind
+  100024  1          40812/tcp  status
+  100024  1          54378/udp  status
+	2-4	
+		515	printer			
+		631	ipp			
+		2822	ssh	SSH-2.0-OpenSSH_6.7p1 Debian-5+deb8u1	6.7p1 Debian 5+deb8u1	
+		9100	jetdirect			
+		40812	status		1	
+81.194.43.219 : 
+		25	smtp			
+		135	msrpc			
+		139	netbios-ssn			
+		445	microsoft-ds			
+		515	printer			
+		631	ipp			
+		2002	globe			
+		5357	http	Microsoft-HTTPAPI/2.0	2.0	
+		9100	jetdirect			
+		45678	eba			
+		49152	msrpc			
+		49153	msrpc			
+		49154	msrpc			
+		49155	msrpc			
+		49158	msrpc			
+		60002	vnc	RFB 003.006		
+		60003	vnc-http			
+81.194.43.220 : 
+		22	ssh	SSH-2.0-OpenSSH_7.2	7.2	
+		25	smtp			
+		515	printer			
+		631	ipp			
+		9100	jetdirect			
+81.194.43.221 : 
+		22	ssh	SSH-2.0-OpenSSH_7.2	7.2	
+		25	smtp			
+		515	printer			
+		631	ipp			
+		9100	jetdirect			
+81.194.43.223 : 
+		25	smtp			
+		515	printer			
+		631	ipp			
+		9100	jetdirect			
+81.194.43.224 : 
+		22	ssh	SSH-2.0-OpenSSH_6.5	6.5	
+		25	smtp			
+		80	http	nginx/1.5.8	1.5.8	
+		443	http	nginx/1.5.8	1.5.8	
+		515	printer			
+		631	ipp			
+		1720	H.323/Q.931			
+		4043	rsync	@RSYNCD: 30.0		
+		4044	ltp	version: TT7.3.3 c84180a\x0Amethod: rsync\x0Aurl: rsync://81.19
+4.43.224:4043/endeavour/endeavour.pkg\x0Atargets: 101650,101650-3,10...
+		
+		4048	http	nginx/1.5.8	1.5.8	
+		4053	ccu-comm-1	\x00\x02\x00\x00		
+		9100	jetdirect			
+81.194.43.225 : 
+		22	ssh	SSH-2.0-OpenSSH_6.7p1 Debian-5+deb8u2	6.7p1 Debian 5+deb8u2	
+		25	smtp			
+		80	http	nginx/1.6.2	1.6.2	
+		515	printer			
+		631	ipp			
+		1935	rtmp			
+		5080	onscreen			
+		8080	http	Apache-Coyote/1.1	1.1	
+		9100	jetdirect			
+		9998	distinct32			
+		9999	rmiregistry			
+81.194.43.242 : 
+		22	ssh	SSH-2.0-OpenSSH_6.7p1 Debian-5+deb8u1	6.7p1 Debian 5+deb8u1	
+		25	smtp			
+		80	http	Apache/2.4.10 (Debian)	2.4.10	
+		111	rpcbind	
+  program version   port/proto  service
+  100000  2,3,4        111/tcp  rpcbind
+  100000  2,3,4        111/udp  rpcbind
+  100024  1          45961/udp  status
+  100024  1          58795/tcp  status
+	2-4	
+		515	printer			
+		631	ipp			
+		9100	jetdirect			
+		58795	status		1	
+81.194.43.249 : 
+		25	smtp			
+		515	printer			
+		631	ipp			
+		2812	tcpwrapped			
+		8139	http	WEBrick/1.3.1 (Ruby/1.8.7/2013-06-27) OpenSSL/1.0.1e	1.3.1	
+		9100	jetdirect			
+		10050	tcpwrapped			
+		37452	tcpwrapped			
+		60022	ssh	SSH-2.0-OpenSSH_5.3	5.3	
+81.194.43.25 : 
+		25	smtp			
+		135	msrpc			
+		137	netbios-ns			
+		138	netbios-dgm			
+		139	netbios-ssn			
+		445	microsoft-ds			
+		515	printer			
+		631	ipp			
+		1110	nfsd-status			
+		2869	icslap			
+		3389	ms-wbt-server			
+		9100	jetdirect			
+		19780	unknown			
+		49152	msrpc			
+		49153	msrpc			
+		49154	msrpc			
+		49155	unknown			
+		49157	msrpc			
+81.194.43.250 : 
+		25	smtp			
+		80	http			
+		111	rpcbind	
+  program version   port/proto  service
+  100000  2,3,4        111/tcp  rpcbind
+  100000  2,3,4        111/udp  rpcbind
+  100024  1          47290/udp  status
+  100024  1          57531/tcp  status
+	2-4	
+		443	http	Apache/2.4.10 (Debian)	2.4.10	
+		515	printer			
+		631	ipp			
+		1795	dpi-proxy			
+		2822	ssh	SSH-2.0-OpenSSH_6.7p1 Debian-5	6.7p1 Debian 5	
+		3490	colubris			
+		5554	sgi-esphttp			
+		8651	tcpwrapped			
+		8652	tcpwrapped			
+		9100	jetdirect			
+		23000	inovaport1			
+		32000				
+		34318	fmproduct		1-4	
+		57531	status		1	
+81.194.43.26 : 
+		25	smtp			
+		135	msrpc			
+		445	microsoft-ds			
+		515	printer			
+		631	ipp			
+		664	tcpwrapped			
+		5357	http	Microsoft-HTTPAPI/2.0	2.0	
+		5800	vnc-http			
+		5900	vnc	RFB 003.008		
+		7946				
+		9100	jetdirect			
+		16993	tcpwrapped			
+		20031	unknown			
+		49152	msrpc			
+		49153	msrpc			
+		49154	msrpc			
+		49192	msrpc			
+		49193	msrpc			
+		49219				
+81.194.43.27 : 
+		25	smtp			
+		135	msrpc			
+		139	netbios-ssn			
+		445	microsoft-ds			
+		515	printer			
+		631	ipp			
+		664	tcpwrapped			
+		2030	oracle-mts			
+		5800	vnc-http			
+		5900	vnc	RFB 003.008		
+		9100	jetdirect			
+		16993	tcpwrapped			
+		49152	msrpc			
+		49153	msrpc			
+		49154	msrpc			
+		49158	msrpc			
+		49159	msrpc			
+		49163	unknown			
+		49191	msrpc			
+		49202	msrpc			
+81.194.43.29 : 
+		80	http	Apache/2.2.22 (Debian)	2.2.22	
+		443	http	Zope/(2.13.21, python 2.7.3, linux2) ZServer/1.1	2.13.21	
+		20031	unknown			
+		60022	ssh	SSH-2.0-OpenSSH_6.0p1 Debian-4+deb7u6	6.0p1 Debian 4+deb7u6	
+81.194.43.30 : 
+		80	http	Apache/2.2.22 (Debian)	2.2.22	
+		443	http	Zope/(2.13.21, python 2.7.3, linux2) ZServer/1.1	2.13.21	
+		20031	unknown			
+		60022	ssh	SSH-2.0-OpenSSH_6.0p1 Debian-4+deb7u6	6.0p1 Debian 4+deb7u6	
+81.194.43.32 : 
+		25	smtp			
+		135	msrpc			
+		139	netbios-ssn			
+		277	unknown			
+		515	printer			
+		631	ipp			
+		1110	nfsd-status			
+		2179	vmrdp			
+		5357	http	Microsoft-HTTPAPI/2.0	2.0	
+		5473	apsolab-tags			
+		5475	apsolab-data			
+		7680	pando-pub			
+		9100	jetdirect			
+		19313				
+		20031	unknown			
+		49664	msrpc			
+		49665	msrpc			
+		49666	msrpc			
+		49667	msrpc			
+		49669	msrpc			
+		49722	msrpc			
+		49727	msrpc			
+		51892				
+81.194.43.33 : 
+		25	smtp			
+		80	http	Virata-EmWeb/R6_2_1	6.2.1	
+		139	tcpwrapped			
+		445	microsoft-ds			
+		515	printer			
+		631	ipp			
+		3910	soap	gSOAP/2.7	2.7	
+		3911	tcpwrapped			
+		8289	soap	gSOAP/2.7	2.7	
+		8291	unknown			
+		8292	blp3			
+		8293	hiperscan-id			
+		8294	blp4			
+		8295	soap	gSOAP/2.7	2.7	
+		8888	sun-answerbook			
+		9100	jetdirect			
+		9107	jetdirect			
+		23000	inovaport1	****************************************************\x0D\x0A* W
+elcome to telnet_debug                          *\x0D\x0A* Type "hel...
+		
+81.194.43.34 : 
+		21	ftp	421 Session access restricted, closing control connection.		
+		25	smtp			
+		80	http	Virata-EmWeb/R6_2_1	6.2.1	
+		443	http	HP-ChaiSOE/1.0	6.2.1	
+		515	printer			
+		631	ipp			
+		3910	soap	gSOAP/2.7	2.7	
+		5355	llmnr			
+		9100	jetdirect			
+81.194.43.35 : 
+		25	smtp			
+		515	printer			
+		631	ipp			
+		9100	jetdirect			
+		20031	unknown			
+		60022	ssh	SSH-2.0-OpenSSH_6.6.1	6.6.1	
+81.194.43.38 : 
+		80	http	
+  Apache-Coyote/1.1
+  Apache/2.2.22 (Debian)	1.1	
+		60022	ssh	SSH-2.0-OpenSSH_6.0p1 Debian-4+deb7u1	6.0p1 Debian 4+deb7u1	
+81.194.43.39 : 
+		80	http	
+  Apache-Coyote/1.1
+  Apache/2.2.22 (Debian)	1.1	
+		60022	ssh	SSH-2.0-OpenSSH_6.0p1 Debian-4+deb7u1	6.0p1 Debian 4+deb7u1	
+81.194.43.42 : 
+		25	smtp			
+		135	msrpc			
+		139	netbios-ssn			
+		445	microsoft-ds			
+		515	printer			
+		631	ipp			
+		3389	ms-wbt-server			
+		9100	jetdirect			
+		20031	unknown			
+		49152	msrpc			
+		49153	msrpc			
+		49154	msrpc			
+		49155	msrpc			
+		49180	msrpc			
+81.194.43.45 : 
+		53	domain			
+		80	http-proxy		1.3.1 or later	
+		1812	tcpwrapped			
+		1813	tcpwrapped			
+		5432	postgresql			
+		20031	unknown			
+81.194.43.46 : 
+		53	domain			
+		80	http-proxy		1.3.1 or later	
+		1812	tcpwrapped			
+		1813	tcpwrapped			
+		5432	postgresql			
+		20031	unknown			
+81.194.43.47 : 
+		25	smtp			
+		80	http	Apache		
+		111	rpcbind		2-4	
+		443	http	Apache		
+		515	printer			
+		631	ipp			
+		662	status		1	
+		892	mountd		1-3	
+		3000	http	Apache		
+		3306	mysql	J\x00\x00\x00\x0A5.5.52\x00\\x01\x03\x00\xj*2ZPb\x00\xFF\xF7\x0
+8\x02\x00\x0F\x80\x15\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00zbZ~*UL...
+	5.5.52	
+		4369	epmd			
+		5222	jabber	
+  STARTTLS Failed
+  info: 
+    capabilities: 
+
+    unknown: 
+
+    compression_methods: 
+
+    errors: 
+      host-unknown
+      host-unknown
+      (timeout)
+    stream_id: 7458475912558646468
+    xmpp: 
+      lang: fr
+      server name: univ-paris13.fr
+      version: 1.0
+    auth_mechanisms: 
+
+    features: 
+		
+		5223	jabber	
+  STARTTLS Failed
+  info: 
+    capabilities: 
+
+    unknown: 
+
+    errors: 
+      (timeout)
+    features: 
+
+    xmpp: 
+
+    auth_mechanisms: 
+
+    compression_methods: 
+		
+		5432	postgresql			
+		8139	http	WEBrick/1.3.1 (Ruby/1.8.7/2013-06-27) OpenSSL/1.0.1e	1.3.1	
+		8140	http	Apache		
+		9100	jetdirect			
+		10050	tcpwrapped			
+		10051	zabbix-trapper			
+		20031	unknown			
+		59221	nlockmgr		1-4	
+		59658				
+		60022				
+81.194.43.5 : 
+		25	smtp			
+		139	netbios-ssn			
+		445	microsoft-ds			
+		515	printer			
+		548	afp			
+		631	ipp			
+		5009	airport-admin			
+		9100	jetdirect			
+		10000	snet-sensor-mgmt			
+81.194.43.52 : 
+		25	smtp			
+		135	msrpc			
+		137	netbios-ns			
+		138	netbios-dgm			
+		139	netbios-ssn			
+		445	microsoft-ds			
+		515	printer			
+		631	ipp			
+		1110	nfsd-status			
+		2869	icslap			
+		3389	ms-wbt-server			
+		8009	ajp13			
+		8080	http	Apache-Coyote/1.1	1.1	
+		9091	xmltec-xmlmail	\x00\x00\x00\x00\x00\x00\x00\x05\x009\x000\x001\x001\x007\x00\x
+00\x00F\x00R\x00e\x00m\x00o\x00t\x00e\x00 \x00c\x00o\x00n\x00n\x00e\...
+		
+		9100	jetdirect			
+		19780	unknown			
+		49152	msrpc			
+		49153	msrpc			
+		49154	msrpc			
+		49157	msrpc			
+		49159	msrpc			
+		59223	http	Restlet-Framework/2.3.0	2.3.0	
+81.194.43.56 : 
+		80	tcpwrapped	AKCP Embedded Web Server		
+		8080	http	AKCP Embedded Web Server		
+81.194.43.57 : 
+		80	http	AKCP Embedded Web Server		
+		8080	http-proxy	AKCP Embedded Web Server		
+81.194.43.58 : 
+		25	smtp			
+		80	http	Apache/2.2.15 (CentOS)	2.2.15	
+		443	http	Apache/2.2.15 (CentOS)	2.2.15	
+		515	printer			
+		631	ipp			
+		2812	tcpwrapped			
+		3306	mysql	_\x00\x00\x00\xFFj\x04Host 'LFbn-1-9600-249.w86-236.abo.wanadoo
+.fr' is not allowed to connect to this MySQL server		
+		8443	http	Apache/2.2.15 (CentOS)	2.2.15	
+		9100	jetdirect			
+		60022	ssh	SSH-2.0-OpenSSH_5.3	5.3	
+81.194.43.62 : 
+		25	smtp			
+		515	printer			
+		631	ipp			
+		8139	http	WEBrick/1.3.1 (Ruby/2.0.0/2014-11-13) OpenSSL/1.0.1e	1.3.1	
+		9100	jetdirect			
+		20031	unknown			
+		60022	ssh	SSH-2.0-OpenSSH_6.6.1	6.6.1	
+81.194.43.65 : 
+		443	http	Apache		
+		20031	unknown			
+81.194.43.69 : 
+		135	msrpc			
+		443	http	Microsoft-HTTPAPI/2.0	2.0	
+		3389	ms-wbt-server			
+		8291	tcpwrapped			
+		8295	tcpwrapped			
+		21200	unknown	\x01\x01\x1A\x00\x00\x00x\x9Ccd`b\x10d\xB8\xCF\xCC\xC0\xC0$\xC0
+\x00\x01 \x0E\x8C\x06\x00'\xD6\x02\xCD\x01\x01\x96\x00\x00\x00x\x9Cc...
+		
+		21201	memcachedb	\x01\x01\x1D\x00\x00\x00x\x9Ccd`b\x10dPa```\x12`\x80\x00\x15(~\
+xC0\xCC\xC0\x00\x00\x0D\x8A\x01v\x01\x01\x0D\x01\x00\x00x\x9Ccd`f`gP...
+		
+		21202	unknown	\x01\x01\x1E\x00\x00\x00x\x9Ccd`b\x10dHbd``\x12`\x80\x00\x10\x0
+7\x84\x1F230\x00\x00\x18\x9E\x024\x01\x01\x0E\x01\x00\x00x\x9Ccd`f`g...
+		
+		49154	msrpc			
+81.194.43.74 : 
+		25	smtp			
+		80	http	Mrvl-R2_0		
+		443	https	Mrvl-R2_0		
+		515	printer			
+		631	ipp			
+		3911	soap	gSOAP/2.7	2.7	
+		8080	http-proxy	Mrvl-R2_0		
+		8289				
+		8295	unknown			
+		9100	jetdirect			
+81.194.43.8 : 
+		25	smtp			
+		515	printer			
+		631	ipp			
+		5904	vnc	RFB 003.008		
+		5908	unknown			
+		6000	X11			
+		9100	jetdirect			
+		47600				
+		60022	ssh	SSH-2.0-OpenSSH_6.9	6.9	
+81.194.43.80 : 
+		80	http			
+		20031	unknown			
+81.194.43.81 : 
+		80	http	Apache/2.2.3 (CentOS)	2.2.3	
+		443	http	Apache/2.2.3 (CentOS)	2.2.3	
+		20031	unknown			
+81.194.43.82 : 
+		53	domain			
+		1812	tcpwrapped			
+		1813	tcpwrapped			
+		5432	postgresql			
+		20031	unknown			
+81.194.43.84 : 
+		80	http	Eureka		
+81.194.43.85 : 
+		80	http	Microsoft-IIS/6.0	6.0	
+81.194.43.86 : 
+		135	msrpc			
+		443	http	Microsoft-HTTPAPI/2.0	2.0	
+		49154	msrpc			
+81.194.43.87 : 
+		80	http	Eureka		
+		135	msrpc			
+		443	https			
+		49154	msrpc			
+81.194.43.94 : 
+		22	ssh	SSH-2.0-OpenSSH_5.3	5.3	
+		25	smtp			
+		80	http	Apache/2.2.15 (Red Hat)	2.2.15	
+		515	printer			
+		631	ipp			
+		1521	oracle-tns			
+		1522	oracle-tns			
+		2300	tcpwrapped			
+		2812	tcpwrapped			
+		6998	iatp-highpri			
+		6999	iatp-normalpri			
+		7000	afs3-fileserver			
+		7019	doceri-ctl			
+		7028				
+		7051	unknown			
+		7059	tcpwrapped			
+		7104	tcpwrapped			
+		7129	tcpwrapped			
+		7130	tcpwrapped			
+		7139	tcpwrapped			
+		7150	tcpwrapped			
+		7200	fodms			
+		7251				
+		8182	tcpwrapped			
+		9100	jetdirect			
+81.194.43.95 : 
+		80	http	Apache-Coyote/1.1	1.1	
+		135	msrpc			
+		445	microsoft-ds			
+		3389	ms-wbt-server			
+		49154	msrpc			
+81.194.43.96 : 
+		80	http	Apache		
+		443	http	Apache		
+		20031	unknown			
+		60022	ssh	SSH-2.0-OpenSSH_5.3	5.3	
+
+
+Temps total de l'execution : 3:58:14.881525
