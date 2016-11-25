@@ -1,4 +1,4 @@
-81.194.43.1 : 
+81.194.43.1 c-sw3-c1.univ-paris13.fr : 
 		80	http	Microsoft-IIS/10.0	10.0	
 		1801	msmq			
 		2103	msrpc			
@@ -7,7 +7,7 @@
 		4000	remoteanything			
 		7680	pando-pub			
 		49669	msrpc			
-81.194.43.101 : 
+81.194.43.101 unicampusetu.univ-paris13.fr : 
 		80	http	Microsoft-IIS/7.5	7.5	
 		135	msrpc			
 		445	microsoft-ds			
@@ -17,14 +17,14 @@
 		2107	msrpc			
 		49154	msrpc			
 		49156	msrpc			
-81.194.43.102 : 
+81.194.43.102 sambapers.univ-paris13.fr : 
 		20031	unknown			
-81.194.43.103 : 
+81.194.43.103 uniservices.univ-paris13.fr : 
 		135	msrpc			
 		443	http	Microsoft-IIS/7.5	7.5	
 		3389	ms-wbt-server			
 		49154	msrpc			
-81.194.43.105 : 
+81.194.43.105 save.univ-paris13.fr : 
 		25	smtp			
 		443	https	10.0.5.28		
 		515	printer			
@@ -33,7 +33,7 @@
 		9100	jetdirect			
 		20031	unknown			
 		60022	ssh	SSH-2.0-OpenSSH_5.3	5.3	
-81.194.43.108 : 
+81.194.43.108 airwave.univ-paris13.fr : 
 		22	ssh	SSH-2.0-OpenSSH_5.3	5.3	
 		25	smtp			
 		80	http			
@@ -49,27 +49,27 @@
 		9100	jetdirect			
 		15672	http	MochiWeb/1.0 (Any of you quaids got a smint?)	1.0	
 		55672	http	MochiWeb/1.0 (Any of you quaids got a smint?)	1.0	
-81.194.43.111 : 
+81.194.43.111 bo2.univ-paris13.fr : 
 		53	domain			
 		80	http			
 		113	ident			
 		443	https			
-81.194.43.114 : 
+81.194.43.114 bo1.univ-paris13.fr : 
 		53	domain			
 		80	http			
 		113	ident			
 		443	https			
-81.194.43.118 : 
+81.194.43.118 bigbluebutton.univ-paris13.fr : 
 		80	http	nginx/0.7.65	0.7.65	
 		443	http	nginx/0.7.65	0.7.65	
 		1935	rtmp			
 		9123	grcp			
-81.194.43.122 : 
+81.194.43.122 edt.iutv.univ-paris13.fr : 
 		80	http	Apache		
 		443	http	Apache		
 		20031	unknown			
 		60022	ssh	SSH-2.0-OpenSSH_4.3	4.3	
-81.194.43.128 : 
+81.194.43.128 crealsciences.univ-paris13.fr : 
 		25	smtp			
 		80	http	Apache/2.2.14 (Ubuntu)	2.2.14	
 		515	printer			
@@ -79,7 +79,7 @@
 		8985	tcpwrapped			
 		9100	jetdirect			
 		60022	ssh	SSH-2.0-OpenSSH_5.3p1 Debian-3ubuntu7	5.3p1 Debian 3ubuntu7	
-81.194.43.129 : 
+81.194.43.129 neobroker.univ-paris13.fr : 
 		22	ssh	SSH-2.0-OpenSSH_6.6p1-hpn14v4	6.6p1	
 		25	smtp			
 		80	http	Apache		
@@ -95,13 +95,13 @@
 		24007	rpcbind			
 		24009	rpcbind			
 		27605				
-81.194.43.130 : 
+81.194.43.130 neonat.univ-paris13.fr : 
 		80	http	Apache/2.4.7 (Ubuntu)	2.4.7	
 		443	https			
 		8000	http-alt			
 		8080	http-proxy			
 		11022	ssh	SSH-2.0-OpenSSH_6.6.1p1 Ubuntu-2ubuntu2.4	6.6.1p1 Ubuntu 2ubuntu2.4	
-81.194.43.131 : 
+81.194.43.131 sc-dsi-28.univ-paris13.fr : 
 		25	smtp			
 		135	msrpc			
 		137	netbios-ns			
@@ -122,13 +122,13 @@
 		49667	msrpc			
 		49708	msrpc			
 		49717	msrpc			
-81.194.43.133 : 
+81.194.43.133 pamue.univ-paris13.fr : 
 		22	ssh	SSH-2.0-OpenSSH_4.7p1 Debian-8ubuntu1.2	4.7p1 Debian 8ubuntu1.2	
 		25	smtp			
 		515	printer			
 		631	ipp			
 		9100	jetdirect			
-81.194.43.134 : 
+81.194.43.134 www-rt.iutv.univ-paris13.fr : 
 		25	smtp			
 		80	http	Apache/2.2.15 (CentOS)	2.2.15	
 		515	printer			
@@ -138,7 +138,7 @@
 		9100	jetdirect			
 		20031	unknown			
 		60022	ssh	SSH-2.0-OpenSSH_5.3	5.3	
-81.194.43.146 : 
+81.194.43.146 sep1.univ-paris13.fr : 
 		80	http	Microsoft-IIS/7.5	7.5	
 		135	msrpc			
 		445	microsoft-ds			
@@ -149,7 +149,7 @@
 		9090	zeus-admin			
 		12489	tcpwrapped			
 		49154	msrpc			
-81.194.43.147 : 
+81.194.43.147 sep2.univ-paris13.fr : 
 		25	smtp			
 		80	http	Microsoft-IIS/6.0	6.0	
 		135	msrpc			
@@ -165,14 +165,14 @@
 		9100	jetdirect			
 		12489	tcpwrapped			
 		47001	http			
-81.194.43.154 : 
+81.194.43.154 federation.univ-paris13.fr : 
 		443	http	Apache		
 		20031	unknown			
-81.194.43.155 : 
+81.194.43.155 miroir.univ-paris13.fr : 
 		80	http	Apache		
 		443	http	Apache		
 		60022	ssh	SSH-2.0-OpenSSH_5.3	5.3	
-81.194.43.156 : 
+81.194.43.156 sources.univ-paris13.fr : 
 		25	smtp			
 		80	http	nginx		
 		443	http	nginx		
@@ -183,32 +183,32 @@
 		10050	tcpwrapped			
 		20031	unknown			
 		60022	ssh	SSH-2.0-OpenSSH_6.6.1	6.6.1	
-81.194.43.157 : 
+81.194.43.157 ldaps1.univ-paris13.fr : 
 		53	domain			
 		389	ldap		2.2.X - 2.3.X	
 		1812	tcpwrapped			
 		1813	tcpwrapped			
 		5432	postgresql			
 		20031	unknown			
-81.194.43.178 : 
+81.194.43.178 hebergements.univ-paris13.fr : 
 		21	ftp	220 ProFTPD 1.3.3d Server (Hebergements) [81.194.43.178]	1.3.3d	
 		80	http	Apache		
 		443	http	Apache		
 		20031	unknown			
-81.194.43.185 : 
+81.194.43.185 redac.univ-paris13.fr : 
 		22	ssh	SSH-2.0-OpenSSH_5.3p1 Debian-3ubuntu7.1	5.3p1 Debian 3ubuntu7.1	
 		25	smtp			
 		80	http	Apache/2.2.14 (Ubuntu)	2.2.14	
 		515	printer			
 		631	ipp			
 		9100	jetdirect			
-81.194.43.188 : 
+81.194.43.188  : 
 		25	smtp			
 		515	printer			
 		631	ipp			
 		9100	jetdirect			
 		60022	ssh	SSH-2.0-OpenSSH_6.9	6.9	
-81.194.43.199 : 
+81.194.43.199 smartdisk-baie.univ-paris13.fr : 
 		25	smtp			
 		515	printer			
 		631	ipp			
@@ -218,7 +218,7 @@
 		10050	tcpwrapped			
 		37452	tcpwrapped			
 		60022	ssh	SSH-2.0-OpenSSH_5.3	5.3	
-81.194.43.20 : 
+81.194.43.20 nas-recherche.univ-paris13.fr : 
 		22	ssh	SSH-2.0-OpenSSH_6.7p1 Debian-5+deb8u2	6.7p1 Debian 5+deb8u2	
 		25	smtp			
 		111	rpcbind		2-4	
@@ -231,7 +231,7 @@
 		47245	status		1	
 		56074	nlockmgr		1-4	
 		58463	mountd		1-3	
-81.194.43.200 : 
+81.194.43.200 proxy.univ-paris13.fr : 
 		53	domain			
 		80	http-proxy		1.3.1 or later	
 		389	ldap		2.2.X - 2.3.X	
@@ -242,7 +242,7 @@
 		8443	http	Apache		
 		8843	http	Apache		
 		20031	unknown			
-81.194.43.201 : 
+81.194.43.201 proxy.univ-paris13.fr : 
 		53	domain			
 		80	http-proxy		1.3.1 or later	
 		389	ldap		2.2.X - 2.3.X	
@@ -253,13 +253,13 @@
 		8443	http	Apache		
 		8843	http	Apache		
 		20031	unknown			
-81.194.43.202 : 
+81.194.43.202 ha.univ-paris13.fr : 
 		53	domain			
 		1812	tcpwrapped			
 		1813	tcpwrapped			
 		5432	postgresql			
 		20031	unknown			
-81.194.43.203 : 
+81.194.43.203 mysql.univ-paris13.fr : 
 		53	domain			
 		1812	tcpwrapped			
 		1813	tcpwrapped			
@@ -268,21 +268,13 @@
 	5.5.5-10.1.16-MariaDB	
 		5432	postgresql			
 		20031	unknown			
-81.194.43.204 : 
+81.194.43.204 pgsql.univ-paris13.fr : 
 		53	domain			
 		1812	tcpwrapped			
 		1813	tcpwrapped			
 		5432	postgresql			
 		20031	unknown			
-81.194.43.206 : 
-		53	domain			
-		80	http-proxy		1.3.1 or later	
-		443	http	Apache		
-		1812	tcpwrapped			
-		1813	tcpwrapped			
-		5432	postgresql			
-		20031	unknown			
-81.194.43.207 : 
+81.194.43.206 inalco.univ-paris13.fr : 
 		53	domain			
 		80	http-proxy		1.3.1 or later	
 		443	http	Apache		
@@ -290,7 +282,15 @@
 		1813	tcpwrapped			
 		5432	postgresql			
 		20031	unknown			
-81.194.43.208 : 
+81.194.43.207 inalco.univ-paris13.fr : 
+		53	domain			
+		80	http-proxy		1.3.1 or later	
+		443	http	Apache		
+		1812	tcpwrapped			
+		1813	tcpwrapped			
+		5432	postgresql			
+		20031	unknown			
+81.194.43.208 phototheque.univ-paris13.fr : 
 		25	smtp			
 		80	http	Apache		
 		515	printer			
@@ -302,14 +302,14 @@
 		20031	unknown			
 		60021	ftp	220 FTP Server ready.		
 		60022	ssh	SSH-2.0-OpenSSH_5.3	5.3	
-81.194.43.209 : 
+81.194.43.209 dev.dsps.univ-paris13.fr : 
 		22	ssh	SSH-2.0-OpenSSH_5.9p1 Debian-5ubuntu1.4	5.9p1 Debian 5ubuntu1.4	
 		25	smtp			
 		80	http	Apache/2.2.22 (Ubuntu)	2.2.22	
 		515	printer			
 		631	ipp			
 		9100	jetdirect			
-81.194.43.211 : 
+81.194.43.211 drake-argentueil.univ-paris13.fr : 
 		25	smtp			
 		515	printer			
 		631	ipp			
@@ -318,11 +318,11 @@
 		8443	http	Mbedthis-Appweb/2.4.2	2.4.2	
 		9100	jetdirect			
 		60022	ssh	SSH-2.0-OpenSSH_5.2	5.2	
-81.194.43.212 : 
+81.194.43.212 insservices.univ-paris13.fr : 
 		80	http	Apache-Coyote/1.1	1.1	
 		443	http	Apache-Coyote/1.1	1.1	
 		20031	unknown			
-81.194.43.214 : 
+81.194.43.214 sonde.univ-paris13.fr : 
 		22	ssh	SSH-2.0-OpenSSH_6.7p1 Debian-5+deb8u1	6.7p1 Debian 5+deb8u1	
 		25	smtp			
 		80	http	Apache/2.4.10 (Debian)	2.4.10	
@@ -338,7 +338,7 @@
 		2822	ssh	SSH-2.0-OpenSSH_6.7p1 Debian-5+deb8u1	6.7p1 Debian 5+deb8u1	
 		9100	jetdirect			
 		40812	status		1	
-81.194.43.219 : 
+81.194.43.219 videosecur.univ-paris13.fr : 
 		25	smtp			
 		135	msrpc			
 		139	netbios-ssn			
@@ -356,24 +356,24 @@
 		49158	msrpc			
 		60002	vnc	RFB 003.006		
 		60003	vnc-http			
-81.194.43.220 : 
+81.194.43.220 clohe.univ-paris13.fr : 
 		22	ssh	SSH-2.0-OpenSSH_7.2	7.2	
 		25	smtp			
 		515	printer			
 		631	ipp			
 		9100	jetdirect			
-81.194.43.221 : 
+81.194.43.221 imp-saber.univ-paris13.fr : 
 		22	ssh	SSH-2.0-OpenSSH_7.2	7.2	
 		25	smtp			
 		515	printer			
 		631	ipp			
 		9100	jetdirect			
-81.194.43.223 : 
+81.194.43.223 moneo.univ-paris13.fr : 
 		25	smtp			
 		515	printer			
 		631	ipp			
 		9100	jetdirect			
-81.194.43.224 : 
+81.194.43.224 visio-argentueil.univ-paris13.fr : 
 		22	ssh	SSH-2.0-OpenSSH_6.5	6.5	
 		25	smtp			
 		80	http	nginx/1.5.8	1.5.8	
@@ -388,7 +388,7 @@
 		4048	http	nginx/1.5.8	1.5.8	
 		4053	ccu-comm-1	\x00\x02\x00\x00		
 		9100	jetdirect			
-81.194.43.225 : 
+81.194.43.225 bbb.univ-paris13.fr : 
 		22	ssh	SSH-2.0-OpenSSH_6.7p1 Debian-5+deb8u2	6.7p1 Debian 5+deb8u2	
 		25	smtp			
 		80	http	nginx/1.6.2	1.6.2	
@@ -400,7 +400,7 @@
 		9100	jetdirect			
 		9998	distinct32			
 		9999	rmiregistry			
-81.194.43.242 : 
+81.194.43.242 dsi-netflow.univ-paris13.fr : 
 		22	ssh	SSH-2.0-OpenSSH_6.7p1 Debian-5+deb8u1	6.7p1 Debian 5+deb8u1	
 		25	smtp			
 		80	http	Apache/2.4.10 (Debian)	2.4.10	
@@ -415,7 +415,7 @@
 		631	ipp			
 		9100	jetdirect			
 		58795	status		1	
-81.194.43.249 : 
+81.194.43.249 smartdisk-externe.univ-paris13.fr : 
 		25	smtp			
 		515	printer			
 		631	ipp			
@@ -425,7 +425,7 @@
 		10050	tcpwrapped			
 		37452	tcpwrapped			
 		60022	ssh	SSH-2.0-OpenSSH_5.3	5.3	
-81.194.43.25 : 
+81.194.43.25 mackannan.univ-paris13.fr : 
 		25	smtp			
 		135	msrpc			
 		137	netbios-ns			
@@ -444,7 +444,7 @@
 		49154	msrpc			
 		49155	unknown			
 		49157	msrpc			
-81.194.43.250 : 
+81.194.43.250 magi.univ-paris13.fr : 
 		25	smtp			
 		80	http			
 		111	rpcbind	
@@ -468,7 +468,7 @@
 		32000				
 		34318	fmproduct		1-4	
 		57531	status		1	
-81.194.43.26 : 
+81.194.43.26 c-sw3-c26.univ-paris13.fr : 
 		25	smtp			
 		135	msrpc			
 		445	microsoft-ds			
@@ -488,7 +488,7 @@
 		49192	msrpc			
 		49193	msrpc			
 		49219				
-81.194.43.27 : 
+81.194.43.27  : 
 		25	smtp			
 		135	msrpc			
 		139	netbios-ssn			
@@ -509,17 +509,17 @@
 		49163	unknown			
 		49191	msrpc			
 		49202	msrpc			
-81.194.43.29 : 
+81.194.43.29 scodoc.iut-stdenis.univ-paris13.fr : 
 		80	http	Apache/2.2.22 (Debian)	2.2.22	
 		443	http	Zope/(2.13.21, python 2.7.3, linux2) ZServer/1.1	2.13.21	
 		20031	unknown			
 		60022	ssh	SSH-2.0-OpenSSH_6.0p1 Debian-4+deb7u6	6.0p1 Debian 4+deb7u6	
-81.194.43.30 : 
+81.194.43.30 scodoc.iutv.univ-paris13.fr : 
 		80	http	Apache/2.2.22 (Debian)	2.2.22	
 		443	http	Zope/(2.13.21, python 2.7.3, linux2) ZServer/1.1	2.13.21	
 		20031	unknown			
 		60022	ssh	SSH-2.0-OpenSSH_6.0p1 Debian-4+deb7u6	6.0p1 Debian 4+deb7u6	
-81.194.43.32 : 
+81.194.43.32 pcpatrice.univ-paris13.fr : 
 		25	smtp			
 		135	msrpc			
 		139	netbios-ssn			
@@ -543,7 +543,7 @@
 		49722	msrpc			
 		49727	msrpc			
 		51892				
-81.194.43.33 : 
+81.194.43.33 dsiprinter2.univ-paris13.fr : 
 		25	smtp			
 		80	http	Virata-EmWeb/R6_2_1	6.2.1	
 		139	tcpwrapped			
@@ -564,7 +564,7 @@
 		23000	inovaport1	****************************************************\x0D\x0A* W
 elcome to telnet_debug                          *\x0D\x0A* Type "hel...
 		
-81.194.43.34 : 
+81.194.43.34 dsiprinter.univ-paris13.fr : 
 		21	ftp	421 Session access restricted, closing control connection.		
 		25	smtp			
 		80	http	Virata-EmWeb/R6_2_1	6.2.1	
@@ -574,24 +574,24 @@ elcome to telnet_debug                          *\x0D\x0A* Type "hel...
 		3910	soap	gSOAP/2.7	2.7	
 		5355	llmnr			
 		9100	jetdirect			
-81.194.43.35 : 
+81.194.43.35 onlyoffice.univ-paris13.fr : 
 		25	smtp			
 		515	printer			
 		631	ipp			
 		9100	jetdirect			
 		20031	unknown			
 		60022	ssh	SSH-2.0-OpenSSH_6.6.1	6.6.1	
-81.194.43.38 : 
+81.194.43.38 odf.univ-paris13.fr : 
 		80	http	
   Apache-Coyote/1.1
   Apache/2.2.22 (Debian)	1.1	
 		60022	ssh	SSH-2.0-OpenSSH_6.0p1 Debian-4+deb7u1	6.0p1 Debian 4+deb7u1	
-81.194.43.39 : 
+81.194.43.39 odf-test.univ-paris13.fr : 
 		80	http	
   Apache-Coyote/1.1
   Apache/2.2.22 (Debian)	1.1	
 		60022	ssh	SSH-2.0-OpenSSH_6.0p1 Debian-4+deb7u1	6.0p1 Debian 4+deb7u1	
-81.194.43.42 : 
+81.194.43.42 studiotalend.univ-paris13.fr : 
 		25	smtp			
 		135	msrpc			
 		139	netbios-ssn			
@@ -606,21 +606,21 @@ elcome to telnet_debug                          *\x0D\x0A* Type "hel...
 		49154	msrpc			
 		49155	msrpc			
 		49180	msrpc			
-81.194.43.45 : 
+81.194.43.45 haproxy1.univ-paris13.fr : 
 		53	domain			
 		80	http-proxy		1.3.1 or later	
 		1812	tcpwrapped			
 		1813	tcpwrapped			
 		5432	postgresql			
 		20031	unknown			
-81.194.43.46 : 
+81.194.43.46 haproxy2.univ-paris13.fr : 
 		53	domain			
 		80	http-proxy		1.3.1 or later	
 		1812	tcpwrapped			
 		1813	tcpwrapped			
 		5432	postgresql			
 		20031	unknown			
-81.194.43.47 : 
+81.194.43.47 parc.univ-paris13.fr : 
 		25	smtp			
 		80	http	Apache		
 		111	rpcbind		2-4	
@@ -683,7 +683,7 @@ elcome to telnet_debug                          *\x0D\x0A* Type "hel...
 		59221	nlockmgr		1-4	
 		59658				
 		60022				
-81.194.43.5 : 
+81.194.43.5 c-sw3-c5.univ-paris13.fr : 
 		25	smtp			
 		139	netbios-ssn			
 		445	microsoft-ds			
@@ -693,7 +693,7 @@ elcome to telnet_debug                          *\x0D\x0A* Type "hel...
 		5009	airport-admin			
 		9100	jetdirect			
 		10000	snet-sensor-mgmt			
-81.194.43.52 : 
+81.194.43.52 c-sw3-c52.univ-paris13.fr : 
 		25	smtp			
 		135	msrpc			
 		137	netbios-ns			
@@ -718,13 +718,13 @@ elcome to telnet_debug                          *\x0D\x0A* Type "hel...
 		49157	msrpc			
 		49159	msrpc			
 		59223	http	Restlet-Framework/2.3.0	2.3.0	
-81.194.43.56 : 
+81.194.43.56 temperatureu-up13.univ-paris13.fr : 
 		80	tcpwrapped	AKCP Embedded Web Server		
 		8080	http	AKCP Embedded Web Server		
-81.194.43.57 : 
+81.194.43.57 sonde-thd.univ-paris13.fr : 
 		80	http	AKCP Embedded Web Server		
 		8080	http-proxy	AKCP Embedded Web Server		
-81.194.43.58 : 
+81.194.43.58 planningbiblio.univ-paris13.fr : 
 		25	smtp			
 		80	http	Apache/2.2.15 (CentOS)	2.2.15	
 		443	http	Apache/2.2.15 (CentOS)	2.2.15	
@@ -736,7 +736,7 @@ elcome to telnet_debug                          *\x0D\x0A* Type "hel...
 		8443	http	Apache/2.2.15 (CentOS)	2.2.15	
 		9100	jetdirect			
 		60022	ssh	SSH-2.0-OpenSSH_5.3	5.3	
-81.194.43.62 : 
+81.194.43.62 syslog.univ-paris13.fr : 
 		25	smtp			
 		515	printer			
 		631	ipp			
@@ -744,10 +744,10 @@ elcome to telnet_debug                          *\x0D\x0A* Type "hel...
 		9100	jetdirect			
 		20031	unknown			
 		60022	ssh	SSH-2.0-OpenSSH_6.6.1	6.6.1	
-81.194.43.65 : 
+81.194.43.65 listes.univ-paris13.fr : 
 		443	http	Apache		
 		20031	unknown			
-81.194.43.69 : 
+81.194.43.69 hyperplanning.univ-paris13.fr : 
 		135	msrpc			
 		443	http	Microsoft-HTTPAPI/2.0	2.0	
 		3389	ms-wbt-server			
@@ -763,7 +763,7 @@ xC0\xCC\xC0\x00\x00\x0D\x8A\x01v\x01\x01\x0D\x01\x00\x00x\x9Ccd`f`gP...
 7\x84\x1F230\x00\x00\x18\x9E\x024\x01\x01\x0E\x01\x00\x00x\x9Ccd`f`g...
 		
 		49154	msrpc			
-81.194.43.74 : 
+81.194.43.74 thd-printer.univ-paris13.fr : 
 		25	smtp			
 		80	http	Mrvl-R2_0		
 		443	https	Mrvl-R2_0		
@@ -774,7 +774,7 @@ xC0\xCC\xC0\x00\x00\x0D\x8A\x01v\x01\x01\x0D\x01\x00\x00x\x9Ccd`f`gP...
 		8289				
 		8295	unknown			
 		9100	jetdirect			
-81.194.43.8 : 
+81.194.43.8 pastresmacmini.univ-paris13.fr : 
 		25	smtp			
 		515	printer			
 		631	ipp			
@@ -784,33 +784,33 @@ xC0\xCC\xC0\x00\x00\x0D\x8A\x01v\x01\x01\x0D\x01\x00\x00x\x9Ccd`f`gP...
 		9100	jetdirect			
 		47600				
 		60022	ssh	SSH-2.0-OpenSSH_6.9	6.9	
-81.194.43.80 : 
+81.194.43.80 monitor.univ-paris13.fr : 
 		80	http			
 		20031	unknown			
-81.194.43.81 : 
+81.194.43.81 fan.univ-paris13.fr : 
 		80	http	Apache/2.2.3 (CentOS)	2.2.3	
 		443	http	Apache/2.2.3 (CentOS)	2.2.3	
 		20031	unknown			
-81.194.43.82 : 
+81.194.43.82 ntp.univ-paris13.fr : 
 		53	domain			
 		1812	tcpwrapped			
 		1813	tcpwrapped			
 		5432	postgresql			
 		20031	unknown			
-81.194.43.84 : 
+81.194.43.84 enquetes-sphinx.univ-paris13.fr : 
 		80	http	Eureka		
-81.194.43.85 : 
+81.194.43.85 gestion-sphinx.univ-paris13.fr : 
 		80	http	Microsoft-IIS/6.0	6.0	
-81.194.43.86 : 
+81.194.43.86 sphinx.univ-paris13.fr : 
 		135	msrpc			
 		443	http	Microsoft-HTTPAPI/2.0	2.0	
 		49154	msrpc			
-81.194.43.87 : 
+81.194.43.87 enquetes-sphinxv4.univ-paris13.fr : 
 		80	http	Eureka		
 		135	msrpc			
 		443	https			
 		49154	msrpc			
-81.194.43.94 : 
+81.194.43.94 sigb.univ-paris13.fr : 
 		22	ssh	SSH-2.0-OpenSSH_5.3	5.3	
 		25	smtp			
 		80	http	Apache/2.2.15 (Red Hat)	2.2.15	
@@ -836,17 +836,17 @@ xC0\xCC\xC0\x00\x00\x0D\x8A\x01v\x01\x01\x0D\x01\x00\x00x\x9Ccd`f`gP...
 		7251				
 		8182	tcpwrapped			
 		9100	jetdirect			
-81.194.43.95 : 
+81.194.43.95 gestaprint.univ-paris13.fr : 
 		80	http	Apache-Coyote/1.1	1.1	
 		135	msrpc			
 		445	microsoft-ds			
 		3389	ms-wbt-server			
 		49154	msrpc			
-81.194.43.96 : 
+81.194.43.96 www-info.iutv.univ-paris13.fr : 
 		80	http	Apache		
 		443	http	Apache		
 		20031	unknown			
 		60022	ssh	SSH-2.0-OpenSSH_5.3	5.3	
 
 
-Temps total de l'execution : 3:58:14.881525
+Temps total de l'execution : 0:00:00.008205
