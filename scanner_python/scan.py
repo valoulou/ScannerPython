@@ -309,11 +309,9 @@ def start_scan(ip, port):
     #nm.scan(ip, port, arguments='-sV --script banner')
 
     if port == 'all':
-        #nm.scan(ip, arguments='-p- --max-parallelism=100 -T5 --max-hostgroup=256 --script banner -sV')
         nm.scan(ip, arguments='-sV --script banner -p-')
     else:
         nm.scan(ip, port, arguments='-sV --script banner')
-        #nm.scan(ip, port, arguments='--max-parallelism=100 -T5 --max-hostgroup=256 --script banner -sV')
     
 
     print colored('Scan termine!(%s)\n' % datestr(datetime.now()), 'green')
