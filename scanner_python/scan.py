@@ -75,6 +75,7 @@ class Service:
         self._nomservice=''
         self._state=''
         self._banner=''
+        self._proto=''
     @property
     def port(self):
         return self._port
@@ -85,6 +86,9 @@ class Service:
     def nomservice(self):
         return self._nomservice
     @property
+    def nomservice(self):
+        return self._proto
+    @property
     def state(self):
         return self._state
     @property
@@ -93,6 +97,9 @@ class Service:
     @port.setter
     def port(self, p):
         self._port = p
+    @port.setter
+    def port(self, p):
+        self._proto = p
     @version.setter
     def version(self, v):
         self._version = v
@@ -121,7 +128,7 @@ def insertport(mid, listport, date, cursor):
             try:
                 print colored('\t\tInsertion du port %s...' % actuport.port, 'blue')
                 cursor.execute("""
-                INSERT INTO services (mid, port, proto, state, banner, version, last_view) VALUES(%s, %s, %s, %s, %s, %s, %s)""", (mid, actuport.port, actuport.nomservice, actuport.state, actuport.banner, actuport.version, date))
+                INSERT INTO services (mid, proto, port, nom_service, state, banner, version, last_view) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)""", (mid, actuport.proto, actuport.port, actuport.nomservice, actuport.state, actuport.banner, actuport.version, date))
             except mysql.connector.Error, e:
                 print colored('Error INSERT PORT %s:' % e.args[0], 'red')
                 sys.exit(4)
@@ -136,7 +143,7 @@ def insertport(mid, listport, date, cursor):
                 print colored('Error UDPATE PORT %s:' % e.args[0], 'red')
                 sys.exit(4)
 
-            check_element_service("proto", actuport.nomservice, actuport.port, mid, cursor)
+            check_element_service("nom_service", actuport.nomservice, actuport.port, mid, cursor)
             check_element_service("state", actuport.state, actuport.port, mid, cursor)
             check_element_service("banner", actuport.banner, actuport.port, mid, cursor)
             check_element_service("version", actuport.version, actuport.port, mid, cursor)
@@ -291,6 +298,7 @@ def analyze(nm):
                     v = nm[host][proto][port]['version']
                     servi.version = v
                 servi.port=port
+                servi.proto=proto
                 servi.state=nm[host][proto][port]['state']
                 mon_host.appendserv(servi)
         listhost.append(mon_host)
@@ -303,15 +311,20 @@ def analyze(nm):
 #                                          #
 ############################################
 
-def start_scan(ip, port):
+def start_scan(ip, port, mode):
     print colored('Scan en cours... (%s)' % datestr(datetime.now()), 'yellow')
     nm = nmap.PortScanner()
-    #nm.scan(ip, port, arguments='-sV --script banner')
 
     if port == 'all':
-        nm.scan(ip, arguments='-sV --script banner -p-')
+        if mode == 'fast':
+            nm.scan(ip, arguments='-p- --max-parallelism=100 -T5 --max-hostgroup=256 --script banner -sV')
+        else:
+            nm.scan(ip, arguments='-sV --script banner -p-')
     else:
-        nm.scan(ip, port, arguments='-sV --script banner')
+        if mode == 'fast':
+            nm.scan(ip, port, arguments='--max-parallelism=100 -T5 --max-hostgroup=256 --script banner -sV')
+        else:
+            nm.scan(ip, port, arguments='-sV --script banner')
     
 
     print colored('Scan termine!(%s)\n' % datestr(datetime.now()), 'green')
@@ -340,12 +353,12 @@ def start_insert(listhost):
 ############################################
 
 def result_to_text_file(temptotal, cursor):
-    sqlmachine = """SELECT DISTINCT ip FROM machines"""
+    sqlmachine = """SELECT DISTINCT ip, fqdn FROM machines"""
     file = open("result.txt", "w")
     cursor.execute(sqlmachine)
     machine = cursor.fetchall()
     for rowmac in machine:
-        file.write(rowmac[0]+' : \n')
+        file.write(rowmac[0]+' '+rowmac[1]+' : \n')
         mid = returnmid(rowmac[0], cursor)
         sqlservice = 'SELECT DISTINCT port, proto, banner, version FROM services WHERE mid = '+str(mid)
         cursor.execute(sqlservice)
@@ -401,7 +414,7 @@ def send_result_mail(reseau):
 ############################################
 
 if(len(sys.argv)<3):
-	print colored('Usage : scan.py @IP portdeb-portfin', 'red')
+	print colored('Usage : scan.py @IP portdeb-portfin [mode] fast', 'red')
 	sys.exit(0)
 
 startTime = datetime.now()
@@ -417,14 +430,17 @@ except mysql.connector.Error, e:
 
 print colored('Connexion reussi! (%s)\n' % datestr(datetime.now()), 'green')
 
-start_scan(sys.argv[1], sys.argv[2])
+if len(sys.argv) == 4:
+    start_scan(sys.argv[1], sys.argv[2], "fast")
+else:
+    start_scan(sys.argv[1], sys.argv[2], "slow")
 
 temp_exec = datetime.now() - startTime
 
 print ('Temps d execution total : %s' % temp_exec)
 
-result_to_text_file(temp_exec, cursor)
+#result_to_text_file(temp_exec, cursor)
 
-send_result_mail(sys.argv[1])
+#send_result_mail(sys.argv[1])
 
 bdd.close()
