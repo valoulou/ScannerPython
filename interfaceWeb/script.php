@@ -4,7 +4,7 @@ if(isset($_POST['manageValue']) && !empty($_POST['manageValue'])) {
 
     $arguments = explode(";", $ValForm);
 
-    $servername = "127.0.0.1";
+    $servername = "192.168.10.33";
     $username = "scanner_web";
     $password = "web@pass";
     $dbname = "Scanner";
