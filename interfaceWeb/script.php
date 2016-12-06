@@ -17,11 +17,11 @@ if(isset($_POST['manageValue']) && !empty($_POST['manageValue'])) {
     echo $ValForm . "\n";
 
     echo "Manage= " . $arguments[0];
-    echo "MID= " . $arguments[1];
-    echo "SID= " . $arguments[2];
+    echo "SID= " . $arguments[1];
 
 
-    $sql = "UPDATE services SET manage= $arguments[0] WHERE (mid = $arguments[1]) AND (sid = $arguments[2]) ";
+
+    $sql = "UPDATE services SET manage= $arguments[0] WHERE sid = $arguments[1]";
     $result = $conn->query($sql);
 
     /*if ($result->num_rows > 0) {
