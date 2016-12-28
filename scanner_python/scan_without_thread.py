@@ -11,6 +11,7 @@ import nmap
 import time
 import mysql.connector
 import smtplib
+import signal
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
 from email.MIMEBase import MIMEBase
@@ -319,7 +320,10 @@ def start_scan(ip, port, mode):
         if mode == 'fast':
             nm.scan(ip, arguments='-p- --max-parallelism=100 -T5 --max-hostgroup=256 --script banner -sV')
         else:
-            nm.scan(ip, arguments='-sV --script banner -p-')
+            try:
+                nm.scan(ip, arguments='-sV --script banner -p-')
+            except KeyboardInterrupt:
+                onfaitcabien()
     else:
         if mode == 'fast':
             nm.scan(ip, port, arguments='--max-parallelism=100 -T5 --max-hostgroup=256 --script banner -sV')
@@ -328,7 +332,8 @@ def start_scan(ip, port, mode):
     
 
     print colored('Scan termine!(%s)\n' % datestr(datetime.now()), 'green')
-    analyze(nm)
+    #writelog("Scanfini")
+    return nm
 
 ############################################
 #                                          #
@@ -337,7 +342,6 @@ def start_scan(ip, port, mode):
 ############################################
 
 def start_insert(listhost):
-
     print colored('Insertion dans la BDD...(%s)\n' % datestr(datetime.now()), 'yellow')
 
     for currenthost in listhost:
@@ -409,6 +413,28 @@ def send_result_mail(reseau):
 
 ############################################
 #                                          #
+# Ecriture dans les log                    #
+#                                          #
+############################################
+
+def writelog(chaine):
+    fic = open("/var/log/pythonnmap/pythonnap.log", "a")
+    fic.write(datetime.now()+" : "+chaine+"\n")
+    fic.close()
+
+############################################
+#                                          #
+# Interruption du programme                #
+#                                          #
+############################################
+
+def onfaitcabien(*args):
+    writelog("Interruption")
+    bdd.close()
+    exit(0)
+
+############################################
+#                                          #
 # Programme principal                      #
 #                                          #
 ############################################
@@ -418,6 +444,16 @@ if(len(sys.argv)<3):
 	sys.exit(0)
 
 startTime = datetime.now()
+
+#writelog("Cest parti")
+
+try:
+    if len(sys.argv) == 4:
+        resultscan = start_scan(sys.argv[1], sys.argv[2], "fast")
+    else:
+        resultscan = start_scan(sys.argv[1], sys.argv[2], "slow")
+except KeyboardInterrupt:
+    onfaitcabien()
 
 print colored('Connexion a la BDD... (%s)' % datestr(datetime.now()), 'yellow')
 
@@ -430,10 +466,7 @@ except mysql.connector.Error, e:
 
 print colored('Connexion reussi! (%s)\n' % datestr(datetime.now()), 'green')
 
-if len(sys.argv) == 4:
-    start_scan(sys.argv[1], sys.argv[2], "fast")
-else:
-    start_scan(sys.argv[1], sys.argv[2], "slow")
+analyze(resultscan)
 
 temp_exec = datetime.now() - startTime
 
@@ -442,5 +475,7 @@ print ('Temps d execution total : %s' % temp_exec)
 #result_to_text_file(temp_exec, cursor)
 
 #send_result_mail(sys.argv[1])
+
+#writelog("Fini")
 
 bdd.close()
