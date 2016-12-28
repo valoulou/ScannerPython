@@ -21,9 +21,9 @@ fi
 # Author: Valentin Chaigneau <valentin.chaigneau@insa-cvl.fr>
 
 DESC="Analyse reseau en python avec nmap"
-DAEMON=/usr/sbin/pythonnmap
 DAEMON_NAME=pythonnmap
 DAEMON_ARGS="192.168.45.0/24 22-443"
+PATH_TO_SCRIPT=""
 
 DAEMON_USER=root
 
@@ -31,7 +31,7 @@ PIDFILE=/var/run/$DAEMON_NAME.pid
 
 do_start () {
     log_daemon_msg "Starting service scanner $DAEMON_NAME"
-    start-stop-daemon --start --background --pidfile $PIDFILE --make-pidfile --user $DAEMON_USER --chuid $DAEMON_USER --exec /usr/bin/python /home/valentin/Python_scan/scanner/scan_without_thread.py $DAEMON_ARGS
+    start-stop-daemon --start --background --pidfile $PIDFILE --make-pidfile --user $DAEMON_USER --chuid $DAEMON_USER --exec /usr/bin/python $PATH_TO_SCRIPT/scan_without_thread.py $DAEMON_ARGS
     log_end_msg $?
 }
 do_stop () {
