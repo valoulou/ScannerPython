@@ -265,7 +265,7 @@ def returnportmid(mid, cursor):
 ############################################
 
 def datestr(tmp_time):
-    tmp_time = str(tmp_time.hour)+':'+str(tmp_time.minute)+':'+str(tmp_time.second)
+    tmp_time = str(tmp_time.day)+'/'+str(tmp_time.month)+'/'+str(tmp_time.year)+' '+str(tmp_time.hour)+':'+str(tmp_time.minute)+':'+str(tmp_time.second)
     return tmp_time
 
 ############################################
@@ -314,6 +314,7 @@ def analyze(nm):
 
 def start_scan(ip, port, mode):
     print colored('Scan en cours... (%s)' % datestr(datetime.now()), 'yellow')
+    writelog("Scan en cours")
     nm = nmap.PortScanner()
 
     if port == 'all':
@@ -332,7 +333,7 @@ def start_scan(ip, port, mode):
     
 
     print colored('Scan termine!(%s)\n' % datestr(datetime.now()), 'green')
-    #writelog("Scanfini")
+    writelog("Scan fini")
     return nm
 
 ############################################
@@ -419,7 +420,7 @@ def send_result_mail(reseau):
 
 def writelog(chaine):
     fic = open("/var/log/pythonnmap/pythonnap.log", "a")
-    fic.write(datetime.now()+" : "+chaine+"\n")
+    fic.write(datestr(datetime.now())+" : "+chaine+"\n")
     fic.close()
 
 ############################################
@@ -430,7 +431,10 @@ def writelog(chaine):
 
 def onfaitcabien(*args):
     writelog("Interruption")
-    bdd.close()
+    try:
+        bdd.close()
+    except NameError:
+        print "BDD non connectee"
     exit(0)
 
 ############################################
@@ -445,7 +449,7 @@ if(len(sys.argv)<3):
 
 startTime = datetime.now()
 
-#writelog("Cest parti")
+writelog("Cest parti")
 
 try:
     if len(sys.argv) == 4:
@@ -476,6 +480,6 @@ print ('Temps d execution total : %s' % temp_exec)
 
 #send_result_mail(sys.argv[1])
 
-#writelog("Fini")
+writelog("Fini")
 
 bdd.close()
