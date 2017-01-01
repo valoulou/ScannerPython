@@ -1,10 +1,31 @@
-#!/bin/sh
+#!/bin/bash
+
+unistall() {
+    rm -r /var/log/pythonnmap/
+    rm /etc/init.d/pythonnmap
+}
 
 currentfolder=$(pwd)
 
 if [ "$(id -u)" != "0" ]; then
    echo "Ce script doit etre execute en root" 1>&2
    exit 1
+fi
+
+if [ "$1" != "install" ] && [ "$1" != "unistall" ] && [ "$1" != "reinstall" ]; then
+    echo "Usage : sh install_scanner.sh [install/unistall/reinstall]"
+    exit 1
+fi
+
+if [ "$1" = "unistall" ];then
+    echo "Desinstallation..."
+    unistall
+    exit 1
+fi
+
+if [ "$1" = "reinstall" ];then
+    echo "Reinstallation"
+    unistall
 fi
 
 echo "Creation du dossier de log : /var/log/pythonnmap/"
@@ -38,7 +59,29 @@ fi
 DESC="Analyse reseau en python avec nmap"
 DAEMON=/usr/sbin/pythonnmap
 DAEMON_NAME=pythonnmap
-DAEMON_ARGS="192.168.45.0/24 22-443"
+WRITE_SCRIPT
+
+read -p "Adresse de la BDD : " addr_bdd
+
+read -p "Nom de la base : " bdd_name
+
+read -p "Nom utilisateur BDD : " user
+
+read -p "Mot de passe BDD : " -s password
+
+echo ""
+
+read -p "Reseau a analyser [0.0.0.0/24] : " addr_reseau
+
+read -p "Port a analyser [Port_debut-Port_fin / all] : " port_analyze
+
+echo "NOTE : En vitesse fast l analyse est moins precise !"
+
+read -p "Vitesse d analyse [fast/slow] : " speed
+
+echo 'DAEMON_ARGS="'$addr_reseau' '$port_analyze' '$speed' '$addr_bdd' '$user' '$password' '$bdd_name' ''"' >> /etc/init.d/pythonnmap
+
+cat <<'WRITE_SCRIPT' >> /etc/init.d/pythonnmap
 
 DAEMON_USER=root
 
@@ -46,6 +89,7 @@ PIDFILE=/var/run/$DAEMON_NAME.pid
 
 do_start () {
     log_daemon_msg "Starting service scanner $DAEMON_NAME"
+
 WRITE_SCRIPT
 
 echo '    start-stop-daemon --start --background --pidfile $PIDFILE --make-pidfile --user $DAEMON_USER --chuid $DAEMON_USER --exec /usr/bin/python '$currentfolder'/scan_without_thread.py $DAEMON_ARGS' >> /etc/init.d/pythonnmap

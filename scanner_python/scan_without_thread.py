@@ -278,6 +278,7 @@ def datestr(tmp_time):
 def analyze(nm):
     proto_yes=['tcp', 'udp']
     print colored('Analyse des machines...(%s)' % datestr(datetime.now()), 'yellow')
+    writelog("Analyse des machines")
     listhost=[]
     for host in nm.all_hosts():
         mon_host = Host()
@@ -314,7 +315,6 @@ def analyze(nm):
 
 def start_scan(ip, port, mode):
     print colored('Scan en cours... (%s)' % datestr(datetime.now()), 'yellow')
-    writelog("Scan en cours")
     nm = nmap.PortScanner()
 
     if port == 'all':
@@ -344,6 +344,7 @@ def start_scan(ip, port, mode):
 
 def start_insert(listhost):
     print colored('Insertion dans la BDD...(%s)\n' % datestr(datetime.now()), 'yellow')
+    writelog("Insertion en base de donnees")
 
     for currenthost in listhost:
         insertmachine(currenthost, cursor)
@@ -443,43 +444,52 @@ def onfaitcabien(*args):
 #                                          #
 ############################################
 
-if(len(sys.argv)<3):
-	print colored('Usage : scan.py @IP portdeb-portfin [mode] fast', 'red')
-	sys.exit(0)
+if(len(sys.argv)<4):
+    writelog("Probleme nombre argument")
+    print colored('Usage : scan.py @IP portdeb-portfin [mode] fast\slow', 'red')
+    sys.exit(0)
 
 startTime = datetime.now()
 
-writelog("Cest parti")
+writelog("Service lance")
 
-try:
-    if len(sys.argv) == 4:
-        resultscan = start_scan(sys.argv[1], sys.argv[2], "fast")
-    else:
-        resultscan = start_scan(sys.argv[1], sys.argv[2], "slow")
-except KeyboardInterrupt:
-    onfaitcabien()
+while True:
 
-print colored('Connexion a la BDD... (%s)' % datestr(datetime.now()), 'yellow')
+    try:
+        writelog("Scan en cours pour le reseau "+sys.argv[1]+" pour les port "+sys.argv[2]+" en mode "+sys.argv[3])
+        resultscan = start_scan(sys.argv[1], sys.argv[2], sys.argv[3])
+        #if len(sys.argv) == 4:
+        #    resultscan = start_scan(sys.argv[1], sys.argv[2], "fast")
+        #else:
+        #    resultscan = start_scan(sys.argv[1], sys.argv[2], "slow")
+    except KeyboardInterrupt:
+        onfaitcabien()
 
-try:
-    bdd = mysql.connector.connect(host="127.0.0.1",user="scanner_user",password="user@pass", database="Scanner")
-    cursor = bdd.cursor()
-except mysql.connector.Error, e:
-    print colored('Error %s:' % e.args[0], 'red')
-    sys.exit(1)
+    print colored('Connexion a la BDD... (%s)' % datestr(datetime.now()), 'yellow')
 
-print colored('Connexion reussi! (%s)\n' % datestr(datetime.now()), 'green')
+    try:
+        if len(sys.argv) == 8:
+            bdd = mysql.connector.connect(host=sys.argv[4],user=sys.argv[5],password=sys.argv[6], database=sys.argv[7])
+        else:
+            bdd = mysql.connector.connect(host="127.0.0.1",user="scanner_user",password="user@pass", database="Scanner")
+        cursor = bdd.cursor()
+    except mysql.connector.Error, e:
+        print colored('Error %s:' % e.args[0], 'red')
+        writelog("Erreur connexion BDD")
+        sys.exit(1)
 
-analyze(resultscan)
+    print colored('Connexion reussi! (%s)\n' % datestr(datetime.now()), 'green')
 
-temp_exec = datetime.now() - startTime
+    analyze(resultscan)
 
-print ('Temps d execution total : %s' % temp_exec)
+    bdd.close()
 
-#result_to_text_file(temp_exec, cursor)
+    temp_exec = datetime.now() - startTime
 
-#send_result_mail(sys.argv[1])
+    print ('Temps d execution total : %s' % temp_exec)
 
-writelog("Fini")
+    #result_to_text_file(temp_exec, cursor)
 
-bdd.close()
+    #send_result_mail(sys.argv[1])
+
+    writelog("Scan termine. Temps total : "+str(temp_exec))
