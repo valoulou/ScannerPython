@@ -1,8 +1,5 @@
-##########################
-#                        #
-# Scanner python NMAP    #
-#                        #
-##########################
+## @package scan_without_thread
+#  Ce module permet de faire un scan reseau en python en ce basant sur l'API NMAP
 
 from termcolor import colored
 from datetime import datetime
@@ -17,59 +14,86 @@ from email.MIMEText import MIMEText
 from email.MIMEBase import MIMEBase
 from email import encoders
 
-############################################
-#                                          #
-# Classe Host definissant                  #
-# une machine (ip, service, fqdn, date)    #
-#                                          #
-############################################
+## Documentation de la class Host
+#
+#  Cette class defini une machine
 
 class Host:
 
+    ## Constructeur class Host
     def __init__(self):
         self._ip=''
         self._serv=[]
         self._fqdn=''    
         self._date=time.strftime('%Y-%m-%d %H:%M:%S')
 
+    ## Definition de la propriete IP
+    #  @param self Pointer sur IP.
     @property
     def ip(self):
         return self._ip
+
+    ## Definition de la propriete des services
+    #  @param self Pointer sur tableau des services.
+    #  Cette propriete est defini par un tableau de services
     @property
     def serv(self):
         return self._serv   
+
+    ## Definition de la propriete date
+    #  @param self Pointer sur date.
     @property
     def date(self):
         return self._date
+
+    ## Definition de la propriete FQDN
+    #  @param self Pointer sur FQDN.
     @property
     def fqdn(self):
         return self._fqdn
+
+    ## Setter IP
+    #  @param self Pointer sur IP.
+    #  @param i IP de la machine courante.
     @ip.setter
     def ip(self, i):
         self._ip = i
+
+    ## Setter FQDN
+    #  @param self Pointer sur FQDN.
+    #  @param f FQDN de la machine courante.
     @fqdn.setter
-    def ip(self, f):
+    def fqdn(self, f):
         self._fqdn = f
+
+    ## Setter Services
+    #  @param self Pointer sur Service.
+    #  @param s un des ports associe a la machine courante.
     @serv.setter
     def serv(self, s):
         self._serv = p
 
+    ## Fonction d'ajout de services
+    #  @param self Pointer sur Service.
+    #  @param s service a ajouter a la machine courante.
+    #  Cette fonction permet d'ajouter un service a la liste des services de la machine
     def appendserv(self, s):
         self._serv = self._serv + [s]
         return self._serv
+
+    ## Setter Date
+    #  @param self Pointer sur date.
+    #  @param d date a laquelle le programme voit la machine.
     @date.setter
     def date(self, d):
         self._date = d
 
-############################################
-#                                          #
-# Classe Service definissant               #
-# un service (port, nom du service, state, #
-# banner)                                  #
-#                                          #
-############################################
+## Documentation de la class Service
+#  Cette classe defini un service
 
 class Service:
+
+    ## Constructeur class Service
     def __init__(self):
         self._port=0
         self._version=''
@@ -77,50 +101,90 @@ class Service:
         self._state=''
         self._banner=''
         self._proto=''
+
+    ## Definition de la propriete port
+    #  @param self port associe au service
     @property
     def port(self):
         return self._port
+
+    ## Definition de la propriete version
+    #  @param self version associe au service
     @property
     def version(self):
         return self._version
+
+    ## Definition de la propriete nomservice
+    #  @param self nom associe au service
     @property
     def nomservice(self):
         return self._nomservice
+
+    ## Definition de la propriete port
+    #  @param self protocol associe au service
     @property
-    def nomservice(self):
+    def proto(self):
         return self._proto
+
+    ## Definition de la propriete state
+    #  @param self etat associe au service
     @property
     def state(self):
         return self._state
+
+    ## Definition de la propriete banner
+    #  @param self banner associe au service
     @property
     def banner(self):
         return self._banner
+
+    ## Setter Port
+    #  @param self Pointer port
+    #  @param p port du service
     @port.setter
     def port(self, p):
         self._port = p
-    @port.setter
-    def port(self, p):
+
+    ## Setter Proto
+    #  @param self Pointer proto
+    #  @param p protocol du service
+    @proto.setter
+    def proto(self, p):
         self._proto = p
+
+    ## Setter Version
+    #  @param self Pointer version
+    #  @param v version du service
     @version.setter
     def version(self, v):
         self._version = v
+
+    ## Setter Nomservice
+    #  @param self Pointer nomservice
+    #  @param n nom du service
     @nomservice.setter
     def nomservice(self, n):
         self._nomservice = n
+
+    ## Setter State
+    #  @param self Pointer state
+    #  @param s etat du service
     @state.setter
     def state(self, s):
         self._state = s
-    @state.setter
-    def state(self, b):
+
+    ## Setter Banner
+    #  @param self Pointer banner
+    #  @param b banner du service
+    @banner.setter
+    def banner(self, b):
         self._banner = b
 
-################################################
-#                                              #
-# Fonction inserport                           #
-# Insert les ports et les services dans la BDD #
-# S'ils ne sont pas connus                     #
-#                                              #
-################################################
+## Permet d'inserer les services associes a une machine dans la BDD
+#  @param mid Identifiant de la machine en BDD
+#  @param listport Liste des ports lies a la machine
+#  @param date Date a laquelle la machine a ete vu
+#  @param cursor Variable lie a l'ouverture de la bdd
 
 def insertport(mid, listport, date, cursor):
     rows = returnportmid(mid, cursor)
@@ -151,12 +215,12 @@ def insertport(mid, listport, date, cursor):
 
     print('\n')
 
-############################################
-#                                          #
-# Verifie si la version est differente     #
-# avec la bdd                              #
-#                                          #
-############################################
+## Permet de verifier si les informations concernant le service sont connu. Si l information est erronee alors on la met a jour.
+#  @param check Element que l on veut verifier (nom du service, etat, banner, version...)
+#  @param newval Valeur que l on a detecte et que l on veut verifier
+#  @param port Port associe au service
+#  @param mid Identifiant de la machine en BDD
+#  @param cursor Variable lie a l'ouverture de la bdd
 
 def check_element_service(check, newval, port, mid, cursor):
     try:
@@ -173,14 +237,9 @@ def check_element_service(check, newval, port, mid, cursor):
         print colored('Error UDPATE PORT CHECK VERSION %s:' % e.args[0], 'red')
         sys.exit(4)
 
-############################################
-#                                          #
-# Fonction insermachine                    #
-# Insert les machines dans la BDD          #
-# Si la machine est deja presente, on met  #
-# a jour l heure                           #
-#                                          #
-############################################
+## Permet d'inserer une machine dans la bdd en fonction d'un objet host
+# @param machine Objet definissant la machine
+# @param cursor Variable lie a l'ouverture de la bdd
 
 def insertmachine(machine, cursor):
     cursor.execute("""SELECT ip FROM machines""")
@@ -203,13 +262,10 @@ def insertmachine(machine, cursor):
             sys.exit(3)
     bdd.commit()
 
-############################################
-#                                          #
-# Fonction returnmid                       #
-# Retourne le mid en fonction d'une        #
-# adresse ip                               #
-#                                          #
-############################################
+## Permet de retourner le MID d'une machine en fonction de son IP
+# @param ip IP de la machine que l'on recherche
+# @param cursor Variable lie a l'ouverture de la bdd
+# @return mid MID de la machine recherchee
 
 def returnmid(ip, cursor):
     try:
@@ -223,12 +279,10 @@ def returnmid(ip, cursor):
         print colored('Error SELECT MID %s:' % e.args[0], 'red')
         sys.exit(7)
 
-############################################
-#                                          #
-# Fonction returnsid                       #
-# Retourne le mid en fonction d'un port    #
-#                                          #
-############################################
+## Permet de retourner le SID d'un service en fonction de son port
+# @param port Port du service recherche
+# @param cursor Variable lie a l'ouverture de la bdd
+# @return sid SID du service voulu
 
 def returnsid(port, cursor):
     try:
@@ -241,13 +295,10 @@ def returnsid(port, cursor):
         print colored('Error SELECT SID %s:' % e.args[0], 'red')
         sys.exit(7)
 
-############################################
-#                                          #
-# Fonction returnportmid                   #
-# Retourne les port en fonction du mid     #
-#                                          #
-#                                          #
-############################################
+## Permet de retourner les ports associe a une machine en fonction de son MID
+# @param mid MID de la machine recherchee
+# @param cursor Variable lie a l'ouverture de la bdd
+# @return ports Ports associe au MID
 
 def returnportmid(mid, cursor):
     try:
@@ -258,22 +309,16 @@ def returnportmid(mid, cursor):
         print colored('Error SELECT ALL SID %s:' % e.args[0], 'red')
         sys.exit(8)
 
-############################################
-#                                          #
-# Retourne date HH:MM:SS en String         #
-#                                          #
-############################################
+## Permet de convertir un objet date en String au format HH:MM:SS
+# @param tmp_time Date a convertir
+# @return date Date converti
 
 def datestr(tmp_time):
     tmp_time = str(tmp_time.day)+'/'+str(tmp_time.month)+'/'+str(tmp_time.year)+' '+str(tmp_time.hour)+':'+str(tmp_time.minute)+':'+str(tmp_time.second)
     return tmp_time
 
-############################################
-#                                          #
-# Retourne une list d host configure       #
-# d'un point de vu structure               #
-#                                          #
-############################################
+## Permet de remplir les structure Host et Service en fonction de l'analyse NMAP
+# @param nm Objet de l'analyse NMAP
 
 def analyze(nm):
     proto_yes=['tcp', 'udp']
@@ -307,11 +352,13 @@ def analyze(nm):
     print colored('Analyse terminee!(%s)\n' % datestr(datetime.now()), 'green')
     start_insert(listhost)
 
-############################################
-#                                          #
-# Lance et retourne le resultat du scan    #
-#                                          #
-############################################
+## Permet de lancer le scan NMAP en prenant en compte les IPs et les ports voulus.
+## La fonction prend en compte la vitesse voulu. En mode Slow NMAP sera execute normalement pour un scan complet.
+## En mode Fast NMAP utilisera des threads. Le scan sera rapide mais peut-etre incomplet.
+# @param ip Plage IP ou IP a scanner
+# @param port Plage de port ou port a scanner
+# @param mode Fast ou Slow pour un scan threade ou non
+# @return nm Retourne le resultat du scan
 
 def start_scan(ip, port, mode):
     print colored('Scan en cours... (%s)' % datestr(datetime.now()), 'yellow')
@@ -336,11 +383,8 @@ def start_scan(ip, port, mode):
     writelog("Scan fini")
     return nm
 
-############################################
-#                                          #
-# Lance l insertion dans la base de donnees#
-#                                          #
-############################################
+## Permet de lancer l'insertion des informations scannees en BDD
+# @param listhost Liste des machines scannees sur le reseau
 
 def start_insert(listhost):
     print colored('Insertion dans la BDD...(%s)\n' % datestr(datetime.now()), 'yellow')
@@ -351,12 +395,9 @@ def start_insert(listhost):
         insertport(returnmid(currenthost.ip, cursor), currenthost.serv, currenthost.date, cursor)
     print colored('\nInsertion terminee!(%s)' % datestr(datetime.now()), 'green')
 
-############################################
-#                                          #
-# Enregistre les resultats de la BDD       #
-# dans un fichier                          #
-#                                          #
-############################################
+## Permet d'enregistrer les informations de la BDD dans un fichier txt
+# @param temptotal Temps total de l'analyse
+# @param cursor Variable lie a l'ouverture de la bdd
 
 def result_to_text_file(temptotal, cursor):
     sqlmachine = """SELECT DISTINCT ip, fqdn FROM machines"""
@@ -375,11 +416,8 @@ def result_to_text_file(temptotal, cursor):
     file.write("\n\nTemps total de l'execution : "+str(temptotal))
     file.close()
 
-############################################
-#                                          #
-# Envoi le contenu de la BDD par mail      #
-#                                          #
-############################################
+## Permet d'envoyer les resultats du scan par mail
+# @param reseau Reseau que le scan a analyse
 
 def send_result_mail(reseau):
     fromaddr = "trashliam39@gmail.com"
@@ -413,36 +451,25 @@ def send_result_mail(reseau):
     server.sendmail(fromaddr, toaddr, text)
     server.quit()
 
-############################################
-#                                          #
-# Ecriture dans les log                    #
-#                                          #
-############################################
+## Permet l'ecriture d'un log dans le fichier de log /var/log/pythonnmap/pythonnmap.log
+# @param chaine Chaine de caractere a ecrire dans le fichier de log
 
 def writelog(chaine):
-    fic = open("/var/log/pythonnmap/pythonnap.log", "a")
+    fic = open("/var/log/pythonnmap/pythonnmap.log", "a")
     fic.write(datestr(datetime.now())+" : "+chaine+"\n")
     fic.close()
 
-############################################
-#                                          #
-# Interruption du programme                #
-#                                          #
-############################################
+## Permet de gerer l'interruption du programme par interruption clavier.
+## Ce signal est aussi utilise par le daemon.
+# @param *args Arguments de l'interruption
 
-def onfaitcabien(*args):
+def interruptprogram(*args):
     writelog("Interruption")
     try:
         bdd.close()
     except NameError:
         print "BDD non connectee"
     exit(0)
-
-############################################
-#                                          #
-# Programme principal                      #
-#                                          #
-############################################
 
 if(len(sys.argv)<4):
     writelog("Probleme nombre argument")
@@ -462,34 +489,34 @@ while True:
         #    resultscan = start_scan(sys.argv[1], sys.argv[2], "fast")
         #else:
         #    resultscan = start_scan(sys.argv[1], sys.argv[2], "slow")
+
+        print colored('Connexion a la BDD... (%s)' % datestr(datetime.now()), 'yellow')
+
+        try:
+            if len(sys.argv) == 8:
+                bdd = mysql.connector.connect(host=sys.argv[4],user=sys.argv[5],password=sys.argv[6], database=sys.argv[7])
+            else:
+                bdd = mysql.connector.connect(host="127.0.0.1",user="scanner_user",password="user@pass", database="Scanner")
+            cursor = bdd.cursor()
+        except mysql.connector.Error, e:
+            print colored('Error %s:' % e.args[0], 'red')
+            writelog("Erreur connexion BDD")
+            sys.exit(1)
+
+        print colored('Connexion reussi! (%s)\n' % datestr(datetime.now()), 'green')
+
+        analyze(resultscan)
+
+        bdd.close()
+
+        temp_exec = datetime.now() - startTime
+
+        print ('Temps d execution total : %s' % temp_exec)
+
+        #result_to_text_file(temp_exec, cursor)
+
+        #send_result_mail(sys.argv[1])
+
+        writelog("Scan termine. Temps total : "+str(temp_exec))
     except KeyboardInterrupt:
-        onfaitcabien()
-
-    print colored('Connexion a la BDD... (%s)' % datestr(datetime.now()), 'yellow')
-
-    try:
-        if len(sys.argv) == 8:
-            bdd = mysql.connector.connect(host=sys.argv[4],user=sys.argv[5],password=sys.argv[6], database=sys.argv[7])
-        else:
-            bdd = mysql.connector.connect(host="127.0.0.1",user="scanner_user",password="user@pass", database="Scanner")
-        cursor = bdd.cursor()
-    except mysql.connector.Error, e:
-        print colored('Error %s:' % e.args[0], 'red')
-        writelog("Erreur connexion BDD")
-        sys.exit(1)
-
-    print colored('Connexion reussi! (%s)\n' % datestr(datetime.now()), 'green')
-
-    analyze(resultscan)
-
-    bdd.close()
-
-    temp_exec = datetime.now() - startTime
-
-    print ('Temps d execution total : %s' % temp_exec)
-
-    #result_to_text_file(temp_exec, cursor)
-
-    #send_result_mail(sys.argv[1])
-
-    writelog("Scan termine. Temps total : "+str(temp_exec))
+        interruptprogram()
