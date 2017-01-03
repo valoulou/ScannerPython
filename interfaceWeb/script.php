@@ -4,9 +4,9 @@ if(isset($_POST['manageValue']) && !empty($_POST['manageValue'])) {
 
     $arguments = explode(";", $ValForm);
 
-    $servername = "192.168.10.33";
-    $username = "scanner_web";
-    $password = "web@pass";
+    $servername = "127.0.0.1";
+    $username = "root";
+    $password = "azerty";
     $dbname = "Scanner";
 
     $conn = new mysqli($servername, $username, $password, $dbname);
@@ -24,14 +24,8 @@ if(isset($_POST['manageValue']) && !empty($_POST['manageValue'])) {
     $sql = "UPDATE services SET manage= $arguments[0] WHERE sid = $arguments[1]";
     $result = $conn->query($sql);
 
-    /*if ($result->num_rows > 0) {
-
-    while($row = $result->fetch_assoc()) {
-        echo "ip: " . $row["ip"];
-    }
-    } else {
-      echo "0 results";
-    }*/
     $conn->close();
+
+    header('Location: toute_la_bdd.php');
 }
 ?>
