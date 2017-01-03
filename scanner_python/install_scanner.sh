@@ -1,6 +1,7 @@
 #!/bin/bash
 
 unistall() {
+    rm pythonnmap.conf
     rm -r /var/log/pythonnmap/
     rm /etc/init.d/pythonnmap
 }
@@ -65,7 +66,7 @@ read -p "Adresse de la BDD : " addr_bdd
 
 read -p "Nom de la base : " bdd_name
 
-read -p "Nom utilisateur BDD : " user
+read -p "Nom utilisateur BDD : " bdd_user
 
 read -p "Mot de passe BDD : " -s password
 
@@ -79,8 +80,6 @@ echo "NOTE : En vitesse fast l analyse est moins precise !"
 
 read -p "Vitesse d analyse [fast/slow] : " speed
 
-echo 'DAEMON_ARGS="'$addr_reseau' '$port_analyze' '$speed' '$addr_bdd' '$user' '$password' '$bdd_name' ''"' >> /etc/init.d/pythonnmap
-
 cat <<'WRITE_SCRIPT' >> /etc/init.d/pythonnmap
 
 DAEMON_USER=root
@@ -92,7 +91,7 @@ do_start () {
 
 WRITE_SCRIPT
 
-echo '    start-stop-daemon --start --background --pidfile $PIDFILE --make-pidfile --user $DAEMON_USER --chuid $DAEMON_USER --exec /usr/bin/python '$currentfolder'/scan_without_thread.py $DAEMON_ARGS' >> /etc/init.d/pythonnmap
+echo '    start-stop-daemon --start --background --pidfile $PIDFILE --make-pidfile --user $DAEMON_USER --chuid $DAEMON_USER --exec /usr/bin/python '$currentfolder'/scan_without_thread.py' >> /etc/init.d/pythonnmap
 
 cat <<'WRITE_SCRIPT' >> /etc/init.d/pythonnmap
     log_end_msg $?
@@ -131,3 +130,35 @@ exit 0
 WRITE_SCRIPT
 
 chmod +x /etc/init.d/pythonnmap
+
+read -p "Voulez-vous recevoir les resultats du scan par mail (SMTP uniquement)? [y/n]" reponse
+
+if [ $reponse == "y" ];then
+    read -p "Adresse d envoie : " addr_send
+    read -p "Mot de passe adresse d envoie : " passmail
+    read -p "Adresse destination (mail1, mail2, mail3...) : " addr_dest
+    read -p "Adresse SMTP (gmail:smtp.gmail.com) : " addr_smtp
+    read -p "Port SMTP (gmail:587) : " port_smtp
+fi
+
+echo "Creation du fichier de configuration..."
+
+echo "################ CONFIGURATION SCANNER PYTHON NMAP ################" >> pythonnmap.conf
+echo 'BDDAddr = '$addr_bdd >> pythonnmap.conf
+echo 'BDDName = '$bdd_name >> pythonnmap.conf
+echo 'BDDUser = '$bdd_user >> pythonnmap.conf
+echo 'BDDPass = '$password >> pythonnmap.conf
+echo 'Reseau = '$addr_reseau >> pythonnmap.conf
+echo "## Format : PortDebut-PortFin ou mettre all pour scanner tout les ports" >> pythonnmap.conf
+echo 'Port = '$port_analyze >> pythonnmap.conf
+echo "## Format : slow ou fast (le mode fast est moins precis)" >> pythonnmap.conf
+echo 'Speed = '$speed >> pythonnmap.conf
+echo "################ CONFIGURATION MAIL SCANNER PYTHON NMAP ################" >> pythonnmap.conf
+echo "## Mettre y pour activer l envoie de mail" >> pythonnmap.conf
+echo 'Envoimail = '$reponse >> pythonnmap.conf
+echo 'AddrSend = '$addr_send >> pythonnmap.conf
+echo 'Passmail = '$passmail >> pythonnmap.conf
+echo "##Adresse destination format : mail1, mail2, mail3..." >> pythonnmap.conf
+echo 'AddrDest = '$addr_dest >> pythonnmap.conf
+echo 'AddrSMTP = '$addr_smtp >> pythonnmap.conf
+echo 'PortSMTP = '$port_smtp >> pythonnmap.conf

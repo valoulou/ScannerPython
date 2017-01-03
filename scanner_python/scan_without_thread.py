@@ -3,7 +3,8 @@
 
 from termcolor import colored
 from datetime import datetime
-import sys
+import os, sys
+import csv
 import nmap
 import time
 import mysql.connector
@@ -371,7 +372,7 @@ def start_scan(ip, port, mode):
             try:
                 nm.scan(ip, arguments='-sV --script banner -p-')
             except KeyboardInterrupt:
-                onfaitcabien()
+                interruptprogram()
     else:
         if mode == 'fast':
             nm.scan(ip, port, arguments='--max-parallelism=100 -T5 --max-hostgroup=256 --script banner -sV')
@@ -416,13 +417,44 @@ def result_to_text_file(temptotal, cursor):
     file.write("\n\nTemps total de l'execution : "+str(temptotal))
     file.close()
 
+## Permet d'enregistrer les informations de la BDD dans un fichier csv
+# @param temptotal Temps total de l'analyse
+# @param cursor Variable lie a l'ouverture de la bdd
+
+def result_to_csv_file(temptotal, cursor):
+    c = csv.writer(open("/tmp/result.csv", "wb"))
+    c.writerow(["IP","FQDN","proto","port","nom service","Etat","banner","version"])
+    sqlmachine = """SELECT DISTINCT ip, fqdn FROM machines"""
+    cursor.execute(sqlmachine)
+    machine = cursor.fetchall()
+
+    for rowmac in machine:
+        c.writerow([rowmac[0],rowmac[1],"","","","","",""])
+        mid = returnmid(rowmac[0], cursor)
+        sqlservice = 'SELECT DISTINCT proto, port, nom_service, state, banner, version FROM services WHERE mid = '+str(mid)
+        cursor.execute(sqlservice)
+        service = cursor.fetchall()
+        for rowserv in service:
+            c.writerow(["","",rowserv[0],str(rowserv[1]),rowserv[2],rowserv[3],rowserv[4],str(rowserv[5])])
+    c.writerow([""])
+    c.writerow(["Temp total du scan", temptotal])
+
+
 ## Permet d'envoyer les resultats du scan par mail
 # @param reseau Reseau que le scan a analyse
 
 def send_result_mail(reseau):
-    fromaddr = "trashliam39@gmail.com"
-    #toaddr = ['valentin.chaigneau@gmail.com', 'dupin.raphael@gmail.com', 'aurelien.bourillon@gmail.com']
-    toaddr = ['valentin.chaigneau@gmail.com']
+
+    writelog("Envoi des resultats par mail")
+
+    fromaddr = readconf("AddrSend")
+    toaddrtmp = readconf("AddrDest")
+    toaddrsplit = toaddrtmp.split(", ")
+    toaddr = []
+    for tmp in toaddrsplit:
+        toaddr.append(tmp)
+
+    result_to_csv_file(temp_exec, cursor)
  
     msg = MIMEMultipart()
  
@@ -430,12 +462,12 @@ def send_result_mail(reseau):
     msg['To'] = ", ".join(toaddr)
     msg['Subject'] = "Resultat script"
  
-    body = "Yolo, je suis le script python et voici les resultats pour le reseau "+reseau
+    body = "Je suis le script python et voici les resultats pour le reseau "+reseau
  
     msg.attach(MIMEText(body, 'plain'))
  
-    filename = "result.txt"
-    attachment = open("./result.txt", "rb")
+    filename = "result.csv"
+    attachment = open("/tmp/result.csv", "rb")
  
     part = MIMEBase('application', 'octet-stream')
     part.set_payload((attachment).read())
@@ -443,13 +475,23 @@ def send_result_mail(reseau):
     part.add_header('Content-Disposition', "attachment; filename= %s" % filename)
  
     msg.attach(part)
- 
-    server = smtplib.SMTP('smtp.gmail.com', 587)
+
+    server = smtplib.SMTP(readconf("AddrSMTP"), int(readconf("PortSMTP")))
     server.starttls()
-    server.login(fromaddr, "J@j&Comp.")
+    try:
+        server.login(fromaddr, readconf("Passmail"))
+    except SMTPAuthentificationError:
+        writelog("Erreur identifiant mail")
+        return
     text = msg.as_string()
-    server.sendmail(fromaddr, toaddr, text)
-    server.quit()
+    try:
+        server.sendmail(fromaddr, toaddr, text)
+    except Exception:
+        writelog("Erreur envoi mail")
+        return
+    finally:
+        server.quit()
+    os.remove("/tmp/result.csv")
 
 ## Permet l'ecriture d'un log dans le fichier de log /var/log/pythonnmap/pythonnmap.log
 # @param chaine Chaine de caractere a ecrire dans le fichier de log
@@ -458,6 +500,17 @@ def writelog(chaine):
     fic = open("/var/log/pythonnmap/pythonnmap.log", "a")
     fic.write(datestr(datetime.now())+" : "+chaine+"\n")
     fic.close()
+
+## Permet la lecture du fichier de configuration
+# @param param Nom du parametre que l'on recherche dans le fichier de configuration
+
+def readconf(param):
+    with open('pythonnmap.conf') as fp:
+        for line in fp:
+            if line.split(" = ", 1)[0] == param:
+                return line.split(" = ", 1)[1].rstrip('\n')
+    writelog("Parametre "+param+" non specifie dans le fichier pythonnmap.conf")
+    sys.exit(0)
 
 ## Permet de gerer l'interruption du programme par interruption clavier.
 ## Ce signal est aussi utilise par le daemon.
@@ -471,10 +524,10 @@ def interruptprogram(*args):
         print "BDD non connectee"
     exit(0)
 
-if(len(sys.argv)<4):
-    writelog("Probleme nombre argument")
-    print colored('Usage : scan.py @IP portdeb-portfin [mode] fast\slow', 'red')
-    sys.exit(0)
+#if(len(sys.argv)<4):
+#    writelog("Probleme nombre argument")
+#    print colored('Usage : scan.py @IP portdeb-portfin [mode] fast\slow', 'red')
+#    sys.exit(0)
 
 startTime = datetime.now()
 
@@ -483,8 +536,8 @@ writelog("Service lance")
 while True:
 
     try:
-        writelog("Scan en cours pour le reseau "+sys.argv[1]+" pour les port "+sys.argv[2]+" en mode "+sys.argv[3])
-        resultscan = start_scan(sys.argv[1], sys.argv[2], sys.argv[3])
+        writelog("Scan en cours pour le reseau "+readconf("Reseau")+" pour les port "+readconf("Port")+" en mode "+readconf("Speed"))
+        resultscan = start_scan(readconf("Reseau"), readconf("Port"), readconf("Speed"))
         #if len(sys.argv) == 4:
         #    resultscan = start_scan(sys.argv[1], sys.argv[2], "fast")
         #else:
@@ -493,10 +546,7 @@ while True:
         print colored('Connexion a la BDD... (%s)' % datestr(datetime.now()), 'yellow')
 
         try:
-            if len(sys.argv) == 8:
-                bdd = mysql.connector.connect(host=sys.argv[4],user=sys.argv[5],password=sys.argv[6], database=sys.argv[7])
-            else:
-                bdd = mysql.connector.connect(host="127.0.0.1",user="scanner_user",password="user@pass", database="Scanner")
+            bdd = mysql.connector.connect(host=readconf("BDDAddr"),user=readconf("BDDUser"),password=readconf("BDDPass"), database=readconf("BDDName"))
             cursor = bdd.cursor()
         except mysql.connector.Error, e:
             print colored('Error %s:' % e.args[0], 'red')
@@ -507,11 +557,14 @@ while True:
 
         analyze(resultscan)
 
-        bdd.close()
-
         temp_exec = datetime.now() - startTime
 
         print ('Temps d execution total : %s' % temp_exec)
+
+        if readconf("Envoimail") == "y":
+            send_result_mail(readconf("Reseau"))
+
+        bdd.close()
 
         #result_to_text_file(temp_exec, cursor)
 

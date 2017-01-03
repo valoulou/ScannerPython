@@ -2,3 +2,7 @@ Dans le Doxyfile il y a un parametre "INPUT".
 C'est ici qu'il faut ajouter les fichiers ou dossier que l'on veut documenter.
 
 Pour connaitre les balises en fonction du langage  : http://www.stack.nl/~dimitri/doxygen/manual/docblocks.html#specialblock
+
+Installation doxygen : apt-get install doxygen (lol)
+
+Pour lancer la generation de la documentation : doxygen Doxyfile
