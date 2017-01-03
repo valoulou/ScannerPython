@@ -14,13 +14,13 @@
 
     <?php
 
-    $bdd = new PDO('mysql:host=192.168.10.33;dbname=Scanner', 'scanner_web', 'web@pass');
+    $bdd = new PDO('mysql:host=127.0.0.1;dbname=Scanner', 'root', 'azerty');
     if (!$bdd) {
         die('Connexion impossible : ' . mysql_error());
     }
     echo "Connecte correctement <br>";
 
-    $result = $bdd->query ("SELECT machines.ip, services.mid, services.sid, services.port, services.nom_service, services.state, services.version, servives.banner, services.last_view, services.manage  FROM services, machines WHERE (machines.mid = services.mid) AND state = 'open' AND (manage=1 OR manage=2)");
+    $result = $bdd->query ("SELECT machines.ip, services.mid, services.sid, services.port, services.nom_service, services.state, services.version, services.banner, services.last_view, services.manage  FROM services, machines WHERE (machines.mid = services.mid) AND state = 'open' AND (manage=1 OR manage=2)");
     $result->setFetchMode(PDO::FETCH_ASSOC);
 
     if (!$result) {
