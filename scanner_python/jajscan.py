@@ -467,7 +467,12 @@ def send_result_mail(reseau):
     msg.attach(MIMEText(body, 'plain'))
  
     filename = "result.csv"
-    attachment = open("/tmp/result.csv", "rb")
+
+    try:
+        attachment = open("/tmp/result.csv", "rb")
+    except IOError:
+        writelog("Erreur lecture fichier result.csv. Envoi mail annule")
+        return
  
     part = MIMEBase('application', 'octet-stream')
     part.set_payload((attachment).read())
@@ -505,12 +510,16 @@ def writelog(chaine):
 # @param param Nom du parametre que l'on recherche dans le fichier de configuration
 
 def readconf(param):
-    with open('pythonnmap.conf') as fp:
-        for line in fp:
-            if line.split(" = ", 1)[0] == param:
-                return line.split(" = ", 1)[1].rstrip('\n')
-    writelog("Parametre "+param+" non specifie dans le fichier pythonnmap.conf")
-    sys.exit(0)
+    try:
+        with open(path_conf) as fp:
+            for line in fp:
+                if line.split(" = ", 1)[0] == param:
+                    return line.split(" = ", 1)[1].rstrip('\n')
+        writelog("Parametre "+param+" non specifie dans le fichier pythonnmap.conf")
+        sys.exit(0)
+    except IOError:
+        writelog("Erreur lecture fichier de configuration")
+        sys.exit(0)
 
 ## Permet de gerer l'interruption du programme par interruption clavier.
 ## Ce signal est aussi utilise par le daemon.
@@ -524,12 +533,12 @@ def interruptprogram(*args):
         print "BDD non connectee"
     exit(0)
 
-#if(len(sys.argv)<4):
-#    writelog("Probleme nombre argument")
-#    print colored('Usage : scan.py @IP portdeb-portfin [mode] fast\slow', 'red')
-#    sys.exit(0)
-
 startTime = datetime.now()
+
+if len(sys.argv) == 2:
+    path_conf=sys.argv[1]
+else:
+    path_conf="pythonnmap.conf"
 
 writelog("Service lance")
 
@@ -538,14 +547,12 @@ while True:
     try:
         writelog("Scan en cours pour le reseau "+readconf("Reseau")+" pour les port "+readconf("Port")+" en mode "+readconf("Speed"))
         resultscan = start_scan(readconf("Reseau"), readconf("Port"), readconf("Speed"))
-        #if len(sys.argv) == 4:
-        #    resultscan = start_scan(sys.argv[1], sys.argv[2], "fast")
-        #else:
-        #    resultscan = start_scan(sys.argv[1], sys.argv[2], "slow")
 
         print colored('Connexion a la BDD... (%s)' % datestr(datetime.now()), 'yellow')
 
         try:
+            ## @var bdd
+            # Variable de connexion a la BDD
             bdd = mysql.connector.connect(host=readconf("BDDAddr"),user=readconf("BDDUser"),password=readconf("BDDPass"), database=readconf("BDDName"))
             cursor = bdd.cursor()
         except mysql.connector.Error, e:
@@ -565,10 +572,6 @@ while True:
             send_result_mail(readconf("Reseau"))
 
         bdd.close()
-
-        #result_to_text_file(temp_exec, cursor)
-
-        #send_result_mail(sys.argv[1])
 
         writelog("Scan termine. Temps total : "+str(temp_exec))
     except KeyboardInterrupt:

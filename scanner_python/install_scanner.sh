@@ -91,7 +91,7 @@ do_start () {
 
 WRITE_SCRIPT
 
-echo '    start-stop-daemon --start --background --pidfile $PIDFILE --make-pidfile --user $DAEMON_USER --chuid $DAEMON_USER --exec /usr/bin/python '$currentfolder'/scan_without_thread.py' >> /etc/init.d/pythonnmap
+echo '    start-stop-daemon --start --background --pidfile $PIDFILE --make-pidfile --user $DAEMON_USER --chuid $DAEMON_USER --exec /usr/bin/python '$currentfolder'/jajscan.py' >> /etc/init.d/pythonnmap
 
 cat <<'WRITE_SCRIPT' >> /etc/init.d/pythonnmap
     log_end_msg $?
