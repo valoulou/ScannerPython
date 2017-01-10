@@ -1,0 +1,4 @@
+- Creer une base de donnée
+- Creer un utilisateur pouvant SELECT/UPDATE/INSERT
+- Pour l'installation les droits suivants sont necessaire : CREATE
+- Pour la desinstallaton les droits suivants sont necessaire : DROP
