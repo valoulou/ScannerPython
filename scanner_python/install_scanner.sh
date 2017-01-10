@@ -2,8 +2,93 @@
 
 unistall() {
     rm pythonnmap.conf
+    rm -r gestion_bdd
     rm -r /var/log/pythonnmap/
     rm /etc/init.d/pythonnmap
+}
+
+clear_bdd() {
+    read -p "Nom BDD : " nom_bdd
+    read -p "IP BDD : " ip_bdd
+    echo "Renseignez un utilisateur disposant des droits TRUNCATE/DELETE/ALTER sur la table "$nom_bdd
+    read -p "Nom utilisateur : " bdd_user
+    read -p "Mot de passe : " -s bdd_pass
+    mysql -h $ip_bdd -u $bdd_user "-p"$bdd_pass $nom_bdd < "./gestion_bdd/clear_bdd.sql"
+}
+
+drop_bdd() {
+    read -p "Nom BDD : " nom_bdd
+    read -p "IP BDD : " ip_bdd
+    echo "Renseignez un utilisateur disposant des droits DROP sur la table "$nom_bdd
+    read -p "Nom utilisateur : " bdd_user
+    read -p "Mot de passe : " -s bdd_pass
+    mysql -h $ip_bdd -u $bdd_user "-p"$bdd_pass $nom_bdd < "./gestion_bdd/drop_bdd.sql"
+}
+
+create_bdd() {
+    echo "Renseignez un utilisateur disposant des droits CREATE/ALTER sur la table " $1
+    read -p "Nom utilisateur : " bdd_user
+    read -p "Mot de passe : " -s bdd_pass   
+    mysql -h $2 -u $bdd_user "-p"$bdd_pass $1 < "./gestion_bdd/create_bdd.sql" 
+}
+
+create_script_bdd() {
+    mkdir "gestion_bdd"
+
+    cat <<'WRITE_SCRIPT' > ./gestion_bdd/create_bdd.sql
+CREATE TABLE `machines` (
+  `mid` int(11) NOT NULL,
+  `fqdn` text CHARACTER SET utf8 NOT NULL,
+  `ip` text CHARACTER SET utf8 NOT NULL,
+  `last_view` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE `services` (
+  `sid` int(11) NOT NULL,
+  `mid` int(11) NOT NULL,
+  `proto` text NOT NULL,
+  `port` int(11) NOT NULL,
+  `nom_service` text NOT NULL,
+  `state` text NOT NULL,
+  `banner` text NOT NULL,
+  `version` text NOT NULL,
+  `last_view` datetime NOT NULL,
+  `manage` int(11) NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+ALTER TABLE `machines`
+  ADD PRIMARY KEY (`mid`),
+  ADD KEY `mid` (`mid`) USING BTREE,
+  ADD KEY `last_view` (`last_view`) USING BTREE;
+ALTER TABLE `services`
+  ADD PRIMARY KEY (`sid`),
+  ADD KEY `mid` (`mid`) USING BTREE,
+  ADD KEY `sid` (`sid`) USING BTREE,
+  ADD KEY `last_view` (`last_view`) USING BTREE,
+  ADD KEY `port` (`port`) USING BTREE;
+
+ALTER TABLE `machines`
+  MODIFY `mid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT = 1;
+
+ALTER TABLE `services`
+  MODIFY `sid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT = 1;
+
+ALTER TABLE `services`
+  ADD CONSTRAINT `fk_mid` FOREIGN KEY (`mid`) REFERENCES `machines` (`mid`);
+WRITE_SCRIPT
+
+    create_bdd $1 $2
+
+    cat <<'WRITE_SCRIPT' > ./gestion_bdd/clear_bdd.sql
+TRUNCATE TABLE services;
+DELETE FROM `machines`;
+ALTER TABLE `machines` AUTO_INCREMENT = 1;
+WRITE_SCRIPT
+
+    cat <<'WRITE_SCRIPT' > ./gestion_bdd/drop_bdd.sql
+DROP TABLE `services`;
+DROP TABLE `machines`;
+WRITE_SCRIPT
 }
 
 currentfolder=$(pwd)
@@ -13,14 +98,23 @@ if [ "$(id -u)" != "0" ]; then
    exit 1
 fi
 
-if [ "$1" != "install" ] && [ "$1" != "unistall" ] && [ "$1" != "reinstall" ]; then
-    echo "Usage : sh install_scanner.sh [install/unistall/reinstall]"
+if [ "$1" != "install" ] && [ "$1" != "unistall" ] && [ "$1" != "reinstall" ] && [ "$1" != "clearbdd" ]; then
+    echo "Usage : sh install_scanner.sh [install/unistall/reinstall/clearbdd]"
+    exit 1
+fi
+
+if [ "$1" = "clearbdd" ];then
+    clear_bdd
     exit 1
 fi
 
 if [ "$1" = "unistall" ];then
     echo "Desinstallation..."
+    drop_bdd
     unistall
+    echo "Daemon supprime..."
+    echo "BDD videe..."
+    echo "Supprimez la DataBase pour completer la desinstallation..."
     exit 1
 fi
 
@@ -91,7 +185,7 @@ do_start () {
 
 WRITE_SCRIPT
 
-echo '    start-stop-daemon --start --background --pidfile $PIDFILE --make-pidfile --user $DAEMON_USER --chuid $DAEMON_USER --exec /usr/bin/python '$currentfolder'/jajscan.py' >> /etc/init.d/pythonnmap
+echo '    start-stop-daemon --start --background --pidfile $PIDFILE --make-pidfile --user $DAEMON_USER --chuid $DAEMON_USER --exec /usr/bin/python '$currentfolder'/jajscan.py '$currentfolder/pythonnmap.conf >> /etc/init.d/pythonnmap
 
 cat <<'WRITE_SCRIPT' >> /etc/init.d/pythonnmap
     log_end_msg $?
@@ -162,3 +256,8 @@ echo "##Adresse destination format : mail1, mail2, mail3..." >> pythonnmap.conf
 echo 'AddrDest = '$addr_dest >> pythonnmap.conf
 echo 'AddrSMTP = '$addr_smtp >> pythonnmap.conf
 echo 'PortSMTP = '$port_smtp >> pythonnmap.conf
+
+if [ "$1" = "install" ];then
+    echo "Creation des script SQL..."
+    create_script_bdd $bdd_name $addr_bdd
+fi
