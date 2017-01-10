@@ -197,6 +197,7 @@ def insertport(mid, listport, date, cursor):
                 INSERT INTO services (mid, proto, port, nom_service, state, banner, version, last_view) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)""", (mid, actuport.proto, actuport.port, actuport.nomservice, actuport.state, actuport.banner, actuport.version, date))
             except mysql.connector.Error, e:
                 print colored('Error INSERT PORT %s:' % e.args[0], 'red')
+                writelog("Erreur insertion port")
                 sys.exit(4)
             bdd.commit()
         else:
@@ -207,6 +208,7 @@ def insertport(mid, listport, date, cursor):
                 bdd.commit()
             except mysql.connector.Error, e:
                 print colored('Error UDPATE PORT %s:' % e.args[0], 'red')
+                writelog("Erreur update port")
                 sys.exit(4)
 
             check_element_service("nom_service", actuport.nomservice, actuport.port, mid, cursor)
@@ -236,6 +238,7 @@ def check_element_service(check, newval, port, mid, cursor):
         bdd.commit()
     except mysql.connector.Error, e:
         print colored('Error UDPATE PORT CHECK VERSION %s:' % e.args[0], 'red')
+        writelog("Erreur update port check version")
         sys.exit(4)
 
 ## Permet d'inserer une machine dans la bdd en fonction d'un objet host
@@ -252,6 +255,7 @@ def insertmachine(machine, cursor):
             INSERT INTO machines(fqdn, ip, last_view) VALUES(%s, %s, %s)""", (machine.fqdn, machine.ip, machine.date))
         except mysql.connector.Error, e:
             print colored('Error INSERT MACHINE %s:' % e.args[0], 'red')
+            writelog("Erreur insertion machine")
             sys.exit(2)
     else:
         try:
@@ -260,6 +264,7 @@ def insertmachine(machine, cursor):
             UPDATE machines SET last_view = %s WHERE ip = %s""", (machine.date, machine.ip))
         except mysql.connector.Error, e:
             print colored('Error UPDATE MACHINE %s:' % e.args[0], 'red')
+            writelog("Erreur update machine")
             sys.exit(3)
     bdd.commit()
 
@@ -278,6 +283,7 @@ def returnmid(ip, cursor):
         return result[0]
     except mysql.connector.Error, e:
         print colored('Error SELECT MID %s:' % e.args[0], 'red')
+        writelog("Erreur select mid")
         sys.exit(7)
 
 ## Permet de retourner le SID d'un service en fonction de son port
@@ -294,6 +300,7 @@ def returnsid(port, cursor):
         return cursor.fetchone()
     except mysql.connector.Error, e:
         print colored('Error SELECT SID %s:' % e.args[0], 'red')
+        writelog("Erreur select sid")
         sys.exit(7)
 
 ## Permet de retourner les ports associe a une machine en fonction de son MID
@@ -308,6 +315,7 @@ def returnportmid(mid, cursor):
         return cursor.fetchall()
     except mysql.connector.Error, e:
         print colored('Error SELECT ALL SID %s:' % e.args[0], 'red')
+        writelog("Erreur select all sid")
         sys.exit(8)
 
 ## Permet de convertir un objet date en String au format HH:MM:SS
