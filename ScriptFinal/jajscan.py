@@ -373,19 +373,19 @@ def start_scan(ip, port, mode):
     print colored('Scan en cours... (%s)' % datestr(datetime.now()), 'yellow')
     nm = nmap.PortScanner()
 
-    if port == 'all':
-        if mode == 'fast':
-            nm.scan(ip, arguments='-p- --max-parallelism=100 -T5 --max-hostgroup=256 --script banner -sV')
+    try:
+        if port == 'all':
+            if mode == 'fast':
+                nm.scan(ip, arguments='-p- --max-parallelism=100 -T5 --max-hostgroup=256 --script banner -sV')
+            else:
+                    nm.scan(ip, arguments='-sV --script banner -p-')
         else:
-            try:
-                nm.scan(ip, arguments='-sV --script banner -p-')
-            except KeyboardInterrupt:
-                interruptprogram()
-    else:
-        if mode == 'fast':
-            nm.scan(ip, port, arguments='--max-parallelism=100 -T5 --max-hostgroup=256 --script banner -sV')
-        else:
-            nm.scan(ip, port, arguments='-sV --script banner')
+            if mode == 'fast':
+                nm.scan(ip, port, arguments='--max-parallelism=100 -T5 --max-hostgroup=256 --script banner -sV')
+            else:
+                nm.scan(ip, port, arguments='-sV --script banner')
+    except KeyboardInterrupt:
+        interruptprogram()
     
 
     print colored('Scan termine!(%s)\n' % datestr(datetime.now()), 'green')
