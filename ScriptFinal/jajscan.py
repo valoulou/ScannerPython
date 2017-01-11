@@ -378,7 +378,7 @@ def start_scan(ip, port, mode):
             if mode == 'fast':
                 nm.scan(ip, arguments='-p- --max-parallelism=100 -T5 --max-hostgroup=256 --script banner -sV')
             else:
-                    nm.scan(ip, arguments='-sV --script banner -p-')
+                nm.scan(ip, arguments='-sV --script banner -p-')
         else:
             if mode == 'fast':
                 nm.scan(ip, port, arguments='--max-parallelism=100 -T5 --max-hostgroup=256 --script banner -sV')
