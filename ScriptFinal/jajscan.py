@@ -14,6 +14,8 @@ from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
 from email.MIMEBase import MIMEBase
 from email import encoders
+from netaddr import IPNetwork
+import itertools
 
 ## Documentation de la class Host
 #
@@ -378,7 +380,7 @@ def start_scan(ip, port, mode):
             if mode == 'fast':
                 nm.scan(ip, arguments='-p- --max-parallelism=100 -T5 --max-hostgroup=256 --script banner -sV')
             else:
-                    nm.scan(ip, arguments='-sV --script banner -p-')
+                nm.scan(ip, arguments='-sV --script banner -p-')
 
         else:
             if mode == 'fast':
@@ -389,7 +391,6 @@ def start_scan(ip, port, mode):
             interruptprogram()   
 
     print colored('Scan termine!(%s)\n' % datestr(datetime.now()), 'green')
-    writelog("Scan fini")
     return nm
 
 ## Permet de lancer l'insertion des informations scannees en BDD
@@ -548,39 +549,74 @@ else:
 
 writelog("Service lance")
 
+## Permet de generer une liste d IP en fonction d une la plage IP
+# @param rangeip Plage IP
+
+def define_ip_addr(rangeip):
+    
+    if "/" in rangeip:
+        ip_list = []
+        ip_list = list(IPNetwork(rangeip))
+        ip_list.pop(0)#on retire l'addresse de reseau
+        return ip_list
+    elif "-" in rangeip:
+        ip_list = []
+        numberip = rangeip.split('.')
+        debip = [map(int, numberip.split('-')) for numberip in numberip]
+        ranges = [range(c[0], c[1] + 1) if len(c) == 2 else c for c in debip]
+
+        for address in itertools.product(*ranges):
+            ip_list.append('.'.join(map(str, address)))
+        return ip_list
+    else:
+        return rangeip
+
 while True:
 
     startTime = datetime.now()
 
     try:
         writelog("Scan en cours pour le reseau "+readconf("Reseau")+" pour les port "+readconf("Port")+" en mode "+readconf("Speed"))
-        resultscan = start_scan(readconf("Reseau"), readconf("Port"), readconf("Speed"))
 
-        print colored('Connexion a la BDD... (%s)' % datestr(datetime.now()), 'yellow')
+        for ipactu in define_ip_addr(readconf("Reseau")):
 
-        try:
-            ## @var bdd
-            # Variable de connexion a la BDD
-            bdd = mysql.connector.connect(host=readconf("BDDAddr"),user=readconf("BDDUser"),password=readconf("BDDPass"), database=readconf("BDDName"))
-            cursor = bdd.cursor()
-        except mysql.connector.Error, e:
-            print colored('Error %s:' % e.args[0], 'red')
-            writelog("Erreur connexion BDD")
-            sys.exit(1)
+            writelog("Scan machine "+ipactu+" en cours")
 
-        print colored('Connexion reussi! (%s)\n' % datestr(datetime.now()), 'green')
+            startTimeMachine = datetime.now()
 
-        analyze(resultscan)
+            resultscan = start_scan(str(ipactu), readconf("Port"), readconf("Speed"))
+
+            print colored('Connexion a la BDD... (%s)' % datestr(datetime.now()), 'yellow')
+
+            try:
+                ## @var bdd
+                # Variable de connexion a la BDD
+                bdd = mysql.connector.connect(host=readconf("BDDAddr"),user=readconf("BDDUser"),password=readconf("BDDPass"), database=readconf("BDDName"))
+                cursor = bdd.cursor()
+            except mysql.connector.Error, e:
+                print colored('Error %s:' % e.args[0], 'red')
+                writelog("Erreur connexion BDD")
+                sys.exit(1)
+
+            print colored('Connexion reussi! (%s)\n' % datestr(datetime.now()), 'green')
+
+            analyze(resultscan)
+
+            temp_exec_machine = datetime.now() - startTimeMachine
+
+            print colored('Temps d execution machine : %s' % temp_exec_machine, 'green')
+
+            if readconf("Envoimail") == "y":
+                send_result_mail(readconf("Reseau"))
+
+            bdd.close()
+
+            writelog("Scan termine pour la machine "+ipactu+" Temps total : "+str(temp_exec_machine))
 
         temp_exec = datetime.now() - startTime
+        writelog("Scan total termine. Temps total : "+str(temp_exec))
+        print colored('Temps d execution total : %s' % temp_exec, 'green')
+        writelog("Scan fini")
 
-        print ('Temps d execution total : %s' % temp_exec)
-
-        if readconf("Envoimail") == "y":
-            send_result_mail(readconf("Reseau"))
-
-        bdd.close()
-
-        writelog("Scan termine. Temps total : "+str(temp_exec))
     except KeyboardInterrupt:
         interruptprogram()
