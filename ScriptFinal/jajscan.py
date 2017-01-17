@@ -580,7 +580,7 @@ while True:
 
         for ipactu in define_ip_addr(readconf("Reseau")):
 
-            writelog("Scan machine "+ipactu+" en cours")
+            writelog("Scan machine "+str(ipactu)+" en cours")
 
             startTimeMachine = datetime.now()
 
