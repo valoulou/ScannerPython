@@ -553,14 +553,12 @@ writelog("Service lance")
 # @param rangeip Plage IP
 
 def define_ip_addr(rangeip):
-    
+    ip_list = []
     if "/" in rangeip:
-        ip_list = []
         ip_list = list(IPNetwork(rangeip))
         ip_list.pop(0)#on retire l'addresse de reseau
         return ip_list
     elif "-" in rangeip:
-        ip_list = []
         numberip = rangeip.split('.')
         debip = [map(int, numberip.split('-')) for numberip in numberip]
         ranges = [range(c[0], c[1] + 1) if len(c) == 2 else c for c in debip]
@@ -569,7 +567,8 @@ def define_ip_addr(rangeip):
             ip_list.append('.'.join(map(str, address)))
         return ip_list
     else:
-        return rangeip
+        ip_list.append(rangeip)
+        return ip_list
 
 while True:
 
