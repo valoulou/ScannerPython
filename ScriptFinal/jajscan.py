@@ -608,7 +608,7 @@ while True:
 
             bdd.close()
 
-            writelog("[**] Scan termine pour la machine "+ipactu+" Temps total : "+str(temp_exec_machine))
+            writelog("[**] Scan termine pour la machine "+str(ipactu)+" Temps total : "+str(temp_exec_machine))
 
         temp_exec = datetime.now() - startTime
         writelog("[*]Scan total termine. Temps total : "+str(temp_exec))
