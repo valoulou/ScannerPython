@@ -176,7 +176,6 @@ Creation des script SQL...
 Renseignez un utilisateur disposant des droits CREATE/ALTER sur la table  Scanner
 Nom utilisateur : root
 Mot de passe :
-#
 			\end{lstlisting}
 		\paragraph{}
 			Durant l'installation, un certain nombre de questions sont posées afin de bien configurer le daemon. Suite à cette installation plusieurs dossiers et fichiers sont créé :
@@ -278,6 +277,114 @@ PortSMTP =
 			# service pythonnmap start
 			\end{lstlisting}
 		\paragraph{}
-			Le script Python tourera alors comme un service. Etant donné qu'il possède une boucle infini celui-ci continuera sont execution jusqu'à l'arrêt du service ou de la machine.
+			Le script Python tourera alors comme un service. Etant donné qu'il possède une boucle infini celui-ci continuera sont execution jusqu'à l'arrêt du service ou de la machine. Lorsque l'administrateur stop le service, celui-ci envoi le signal "KeyboardInterrupt" au script.
 \part{Le script Python}
+	\chapter{D'un point de vue général}
+		\paragraph{}
+			Dans cette partie nous allons le fonctionnement général du script. Nous allons voir son file d'execution sans vraiment détailler les fonctions qu'il parcours. Le détail de ces fonctions se fera dans la partie suivante.\\
+			Comme nous l'avons vu dans le chapitre sur le daemon, celui-ci fait appel au script avec un argument. Cet argument sert à localiser le fichier de configuration. S'il n'est pas renseigner, le script considérera qu'il se trouve dans le dossier courant sous le nom de "pythonnmap.conf" :
+			\begin{lstlisting}[caption=Récupération path fichier configuration, captionpos=b]
+if len(sys.argv) == 2:
+    path_conf=sys.argv[1]
+else:
+    path_conf="pythonnmap.conf"
+			\end{lstlisting}
+		\paragraph{}
+			Une fois le path récupéré le script commence sa boucle infini. Il va alors commencer son scan en fonction des paramètres présents dans le fichier de configuration. Quel que soit la plage IP renseignée, le scanner va faire les machines une par une. Cela apporte une meilleur visibilité lors d'un scan sur un grand parc. Si dans le fichier de configuration l'administrateur a spécifié "192.168.1.0/24", le script déduira les IP possible. De même pour une plage IP de la forme "192.168.1.24-52".
+		\paragraph{}
+			Pour chaque adresse IP, un scan sera effectué en fonction des ports renseigné et du mode voulu (fast ou slow). Une fois les informations récupérée, le programme va stocker ces informations dans deux structures. Une structure "Host" et une structure "Service" qui correspondent aux tables présentes dans la base de données. La structure "Host" disposera d'un tableau de "Service" pour qu'une machine soit liée à tous ses services.
+		\paragraph{}
+			Le stockage des machines étant terminé, le programme va maintenant insérer les informations dans la base de données. Plusieurs cas sont alors possible :
+			\begin{itemize}
+				\item La machine n'est pas connu dans la BDD : Le script fera une insertion de toutes les informations
+				\item La machine est connu dans la BDD : Le script fera seulement un update de la date (colonne "last\_view")
+				\item Le service n'est pas connu dans a BDD : Le script fera une insertion de toutes les informations
+				\item Le service est connu dans la BDD : Le script va alors analyser son nom, son état, sa banner et sa version en fonction de la BDD. Il fera un update des informations qui auront changées. Il fera aussi un update de la date (colonne "last\_view")
+			\end{itemize}
+		\paragraph{}
+			Une fois l'insertion en BDD terminée, le script va soit se terminer et recommencer, ou alors envoyer les résultats par mail avant de recommencer. Si c'est le cas, le script va remplir un fichier ".xls" (fichier tableur) qu'il mettra en pièce jointe du mail qui sera envoyé. L'envoi du mail se basera aussi sur les informations renseignées dans le fichier de configuration.
+	\chapter{Fonctions}
+		\section{analyze()}
+			{\setlength{\parindent}{0cm}
+			$Nom :$ analyze\\\\
+			}
+			$Arguments :$
+			\begin{description}
+				\item nm : Objet NMAP
+			\end{description}
+			$Description : $ Cette fonction permet de trier les informations stockées dans l'objet NMAP. Elle remplira les structures "Host" et "Service" puis appelera la fonction "start\_insert()"
+		\section{check\_element\_service()}
+			{\setlength{\parindent}{0cm}
+			$Nom :$ check\_element\_service\\\\
+			}
+			$Arguments :$
+			\begin{description}
+				\item check : Nom de la colonne de la table "services" à vérifier
+				\item newval : Valeur à comparer avec la colonne de la table "services"
+				\item port : numero du port associé au service
+				\item mid : identifiant de la machine
+				\item cursor : Curseur lié à la BDD\\
+			\end{description}
+			$Description : $ Cette fonction permet de vérifier les informations stockées dans la BDD. La variable check aura par exemple comme affectation "nom\_service", "banner", "state" ou "version". Par la suite elle va comparer la nouvelle valeur ("newval") avec ce qu'y est présent dans la BDD.  Elle prendra soin de comparer ces valeurs en fonctions d'une machine et d'un port.
+		\section{datestr()}
+			{\setlength{\parindent}{0cm}
+			$Nom :$ datestr\\\\
+			}
+			$Arguments :$
+			\begin{description}
+				\item tmp\_time : Date à convertir
+			\end{description}
+			$Description : $ Cette fonction permet deconvertir un objet Python date en String au format HH:MM:SS.
+		\section{insertmachine()}
+			{\setlength{\parindent}{0cm}
+			$Nom :$ insertmachine\\\\
+			}
+			$Arguments :$
+			\begin{description}
+				\item machine : Objet "Host"
+				\item cursor : Curseur lié à la BDD\\
+			\end{description}
+			$Description : $ Cette fonction permet d'insérer une machine dans la BDD. Grâce à l'objet "Host", passé en paramètre, la fonction pourra récupérer facilement les informations liées à une machine. A savoir son IP, son FQDN et la date où elle a été vu.
+		\section{insertport()}
+			{\setlength{\parindent}{0cm}
+			$Nom :$ insertport\\\\
+			}
+			$Arguments :$
+			\begin{description}
+				\item mid : Identifiant de la machine
+				\item listport : Liste d'objet "Service"
+				\item date : Date où les services ont été vu
+				\item cursor : Curseur lié à la BDD\\
+			\end{description}
+			$Description : $ Cette fonction permet d'insérer les services lié à une machine dans la BDD. Contrairement à son nom, la fonction attend une liste de la strcture "Service" et non seulement une liste de port.
+		\section{returnmid()}
+			{\setlength{\parindent}{0cm}
+			$Nom :$ returnmid\\\\
+			}
+			$Arguments :$
+			\begin{description}
+				\item ip : IP de la machine
+				\item cursor : Curseur lié à la BDD\\
+			\end{description}
+			$Description : $ Cette fonction permet de retourner le "mid" d'une machine en fonction de son IP. Elle ira chercher cette information dans la BDD.
+		\section{returnportmid()}
+			{\setlength{\parindent}{0cm}
+			$Nom :$ returnportmid\\\\
+			}
+			$Arguments :$
+			\begin{description}
+				\item mid : Identifiant de la machine
+				\item cursor : Curseur lié à la BDD\\
+			\end{description}
+			$Description : $ Cette fonction permet de retourner une liste de port associé à une machine en fonction de son "mid". Elle ira chercher cette information dans la BDD.
+		\section{returnsid()}
+			{\setlength{\parindent}{0cm}
+			$Nom :$ returnsid\\\\
+			}
+			$Arguments :$
+			\begin{description}
+				\item port : Port du service
+				\item cursor : Curseur lié à la BDD\\
+			\end{description}
+			$Description : $ Cette fonction permet de retourner le "sid" d'un service en fonction de son port. Elle ira chercher cette information dans la BDD
 \end{document}
