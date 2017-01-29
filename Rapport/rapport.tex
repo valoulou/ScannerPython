@@ -21,9 +21,9 @@
 \maketitle
 \section*{Introduction}
 	\paragraph{}
-	Dans les entreprises, l'administration d'un parc informatique n'est pas une tâche facile. Les parcs sont de plus en plus grand et un administrateur réseau aura bien du mal à savoir quels services sont présent dans son parc. C'est pourquoi, dans le cadre de nos études, on nous a proposé de réaliser un scanner réseau permettant de connaître rapidement quels sont les services présent dans un parc informatique.	Le principe de ce scanner est assez simple. Il devra scanner un réseau donné pour enregistrer dans une base de données différentes informations que nous verrons plus tard. Ce scanner sera sous la forme d'un daemon pour faciliter l'automatisation. Ces résultats seront visible via un SiteWeb qui permettra de générer un fichier de règles pour un firewall.
+	Dans les entreprises, l'administration d'un parc informatique n'est pas une tâche facile. Les parcs sont de plus en plus grands et un administrateur réseau aura bien du mal à savoir quels services sont présents dans son parc. C'est pourquoi, dans le cadre de nos études, on nous a proposé de réaliser un scanner réseau permettant de connaître rapidement quels sont les services présents dans un parc informatique.	Le principe de ce scanner est assez simple. Il devra scanner un réseau donné pour enregistrer dans une base de données différentes informations que nous verrons plus tard. Ce scanner sera sous la forme d'un daemon pour faciliter l'automatisation. Ces résultats seront visibles via un SiteWeb qui permettra de générer un fichier de règles pour un firewall.
 	\paragraph{}
-	Ce rapport présentera les outils utilisés à savoir NMAP et l'API Python de NMAP. Nous exposerons ce que NMAP permet et pourquoi le choix du langage python est interressant dans ce cas. Nous verrons ensuite l'installation et la configuration du daemon via les fichiers fourni. 
+	Ce rapport présentera les outils utilisés à savoir NMAP et l'API Python de NMAP. Nous exposerons ce que NMAP permet et pourquoi le choix du langage python est intéressant dans ce cas. Nous verrons ensuite l'installation et la configuration du daemon via les fichiers fournît. 
 \tableofcontents
 \part{Présentation du contexte}
 	\chapter{NMAP}
@@ -52,7 +52,7 @@ OS and Service detection performed. Please report any incorrect results at https
 Nmap done: 1 IP address (1 host up) scanned in 39.56 seconds
 			\end{lstlisting}
 			\paragraph{}
-				Sur cet exemple nous pouvons voir que la machine analysée a trois services disponible. HTTP est ouvert sur le port 80, HTTPS closed sur le port 443 et un autre service inconnu sur le port 20031. Il faut savoir que l'état "open" et "closed" sont assez courant mais ce ne sont pas les seuls. En effet, nmap peut voir un service en état "filtered" ou "unfiltered". Voici l'explication pour chacun de ces états :
+				Sur cet exemple nous pouvons voir que la machine analysée a trois services disponibles. HTTP est ouvert sur le port 80, HTTPS closed sur le port 443 et un autre service inconnu sur le port 20031. Il faut savoir que l'état "open" et "closed" sont assez courant mais ce ne sont pas les seuls. En effet, nmap peut voir un service en état "filtered" ou "unfiltered". Voici l'explication pour chacun de ces états :
 			\begin{description}
 			\item OPEN : Le service de la machine est en écoute sur ce port
 			\item CLOSED : Aucun service en écoute sur ce port. Mais il peut s'ouvrir n'importe quand.
@@ -60,13 +60,13 @@ Nmap done: 1 IP address (1 host up) scanned in 39.56 seconds
 			\item UNFILTERED : Ces ports sont particuliés, car ils répondent aux paquets test de NMAP, cependant NMAP ne peut pas déterminer s'ils sont ouverts ou fermés.
 			\end{description}
 			\paragraph{}
-				En bref, NMAP offre de nombreuses possibilités qui peut répondre au projet que nous devons réaliser. Les explications précédentes ne sont qu'une petite partie de ce que peut faire NMAP. Il peut par exemple effectuer du reverse DNS, connaître le type de matériel de la machine ou même retrouver les adresses MAC.
+				En bref, NMAP offre de nombreuses possibilités qui peuvent répondre au projet que nous devons réaliser. Les explications précédentes ne sont qu'une petite partie de ce que peut faire NMAP. Il peut par exemple effectuer du reverse DNS, connaître le type de matériel de la machine ou même retrouver les adresses MAC.
 	\chapter{Python}
 		\section{Python en bref}
 			\paragraph{}
-				Python est un langage de programmation créé en 1991, mais baptisé seulement en 2001 (Python Software Foundation). Les informatitiens aiment penser que le nom de ce langage est une référence aux "Monty Python" dont Guido van Rossum était fan. Mais Concrétement qu'est ce que Python ? Tout d'abord il faut savoir que python est un langage facile (bien que son indentation reste un petit casse-tête) à apprendre, mais qui offre de nombreuses possibilités. Les programmes sont appelés script qui ont souvent une seule mission bien précise. Cependant il est possible de réaliser des jeux vidéos, logiciels en tout genre voir même des progiciels (souvent utilisés par les professionnel, ce sont plusieurs logiciels fonctionnant ensemble).
+				Python est un langage de programmation créé en 1991, mais baptisé seulement en 2001 (Python Software Foundation). Les informaticiens aiment penser que le nom de ce langage est une référence aux "Monty Python" dont Guido van Rossum était fan. Mais Concrètement qu'est-ce que Python ? Tout d'abord, il faut savoir que python est un langage facile (bien que son indentation reste un petit casse-tête) à apprendre, mais qui offre de nombreuses possibilités. Les programmes sont appelés script qui ont souvent une seule mission bien précise. Cependant, il est possible de réaliser des jeux vidéos, logiciels en tout genre voir même des progiciels (souvent utilisés par les professionnel, ce sont plusieurs logiciels fonctionnant ensemble).
 			\paragraph{}
-				Ce langage utilise un système de typage automatique. C'est à dire que lors de l'affectation d'une variable, Python va en déduire le typage (int, float, str...). Par exemple voici une suite de commande affectant une variable et dont on affichera le type :
+				Ce langage utilise un système de typage automatique. C'est-à-dire que lors de l'affectation d'une variable, Python va en déduire le typage (int, float, str...). Par exemple voici une suite de commande affectant une variable et dont on affichera le type :
 				\begin{lstlisting}[caption=Affectation variable en Python, captionpos=b]
 			>>> variable="Bonjour"
 			>>> type(variable)
@@ -74,10 +74,10 @@ Nmap done: 1 IP address (1 host up) scanned in 39.56 seconds
 			>>>
 				\end{lstlisting}
 			\paragraph{}
-				Nous pouvons voir sur cet exemple que la variable est affectée à une chaîne de caractère. Python déduira alors son type automatiquement. Mais alors pourquoi utiliser Python dans notre projet ? Comme nous l'avons vu nous pouvons créer des scripts. Ce qui permettra d'automatiser le scan réseau plus facilement. Mais surtout Python à une API qui permet d'interragir avec NAP. C'est ce que nous allons voir maintenant.
+				Nous pouvons voir sur cet exemple que la variable est affectée à une chaîne de caractère. Python déduira alors son type automatiquement. Mais alors pourquoi utiliser Python dans notre projet ? Comme nous l'avons vu nous pouvons créer des scripts. Ce qui permettra d'automatiser le scan réseau plus facilement. Mais surtout Python à une API qui permet d'interagir avec NAP. C'est ce que nous allons voir maintenant.
 		\section{l'API NMAP}
 			\paragraph{}
-				Dans cette partie nous allons exposer le fonctionnement et l'utilisation de l'API NMAP Python. Pour que cette API fonctionne, NMAP doit être installé sur la machine. Voici la démarche à suivre pour effectuer un scan sur la même machine que tout à l'heure mais en spécifiant une plage de port, mais en Python :
+				Dans cette partie nous allons exposer le fonctionnement et l'utilisation de l'API NMAP Python. Pour que cette API fonctionne, NMAP doit être installé sur la machine. Voici la démarche à suivre pour effectuer un scan sur la même machine que tout à l'heure mais en spécifiant une plage de port mais, en Python :
 				\begin{lstlisting}[caption=Scan NMAP avec Python, captionpos=b]
 >>> import nmap
 >>> nm = nmap.PortScanner()
@@ -85,13 +85,13 @@ Nmap done: 1 IP address (1 host up) scanned in 39.56 seconds
 {'nmap': {'scanstats': {'uphosts': '1', 'timestr': 'Wed Jan 25 14:12:35 2017', 'downhosts': '0', 'totalhosts': '1', 'elapsed': '15.91'}, 'scaninfo': {'tcp': {'services': '22-443', 'method': 'connect'}}, 'command_line': 'nmap -oX - -p 22-443 -sV 81.194.43.80'}, 'scan': {'81.194.43.80': {'status': {'state': 'up', 'reason': 'syn-ack'}, 'hostnames': [{'type': 'PTR', 'name': 'monitor.univ-paris13.fr'}], 'vendor': {}, 'addresses': {'ipv4': '81.194.43.80'}, 'tcp': {80: {'product': 'Apache httpd', 'state': 'open', 'version': '2.2.8', 'name': 'http', 'conf': '10', 'extrainfo': '(Ubuntu)', 'reason': 'syn-ack', 'cpe': 'cpe:/a:apache:http_server:2.2.8'}, 443: {'product': '', 'state': 'closed', 'version': '', 'name': 'https', 'conf': '3', 'extrainfo': '', 'reason': 'conn-refused', 'cpe': ''}}}}}
 				\end{lstlisting}
 			\paragraph{}
-				Nous avons tout d'abord importé la libraire nmap, pour ensuite affecter une variable au PortScanner() de NMAP. Pour finir par lancer un scan en spécifiant une IP, une plage de port et des arguments NMAP. Mais finalement que fait l'API ? En fait, rien d'extraordinaire, si nous regardons les processus en cours lors de l'execution de la commande :
+				Nous avons tout d'abord importé la libraire nmap, pour ensuite affecter une variable au PortScanner() de NMAP. Pour finir par lancer un scan en spécifiant une IP, une plage de port et des arguments NMAP. Mais finalement que fait l'API ? En fait, rien d'extraordinaire, si nous regardons les processus en cours lors de l'exécution de la commande :
 				\begin{lstlisting}
 $ ps aux | grep nmap
 kungfury  3061 12.0  0.3  74708 31304 pts/1    S+   14:13   0:00 nmap -oX - 81.194.43.80 -p 22-443 -sV
 				\end{lstlisting}
 			\paragraph{}
-				Nous pouvons remarquer que le script fait appel à NMAP avec l'option "-oX". Cette option permet de formater la sortie du scan au format XML. Une fois cette sortie récupérée, l'API n'a plus qu'à ranger les informations dans une structure que nous pourrons interroger par la suite. Elle est d'ailleur affichée en sortie dans l'exemple de scan NMAP avec Python. Mais cette fonctionnalité ne sort pas seulement une structure. Nous le verrons plus en détail lorsque nous parlerons de notre solution final, mais nous pouvons faire appel à différentes fonction pour nous simplifier la vie. Voici un exemple qui permet de récupérer le nom d'un service sur une machine donnée.
+				Nous pouvons remarquer que le script fait appel à NMAP avec l'option "-oX". Cette option permet de formater la sortie du scan au format XML. Une fois cette sortie récupérée, l'API n'a plus qu'à ranger les informations dans une structure que nous pourrons interroger par la suite. Elle est d'ailleurs affichée en sortie dans l'exemple de scan NMAP avec Python. Mais cette fonctionnalité ne sort pas seulement une structure. Nous le verrons plus en détail lorsque nous parlerons de notre solution finale, mais nous pouvons faire appel à différentes fonctions pour nous simplifier la vie. Voici un exemple qui permet de récupérer le nom d'un service sur une machine donnée.
 				\begin{lstlisting}[caption=Récupération du nom d'un service, captionpos=b]
 >>> nm.all_hosts()
 ['81.194.43.80']
@@ -104,7 +104,7 @@ kungfury  3061 12.0  0.3  74708 31304 pts/1    S+   14:13   0:00 nmap -oX - 81.1
 				\end{lstlisting}
 		\section{L'API MYSQL}
 			\paragraph{}
-				Nous l'avons vu en introduction, les résulatats trouvés par le script python seront stockés dans une base de données. Nous allons exposer ici comment dialoguer avec une base de données MYSQL en Python. Le paquet "python-connector" est necessaire pour effectuer l'exemple suivant :
+				Nous l'avons vu en introduction, les résultats trouvés par le script python seront stockés dans une base de données. Nous allons exposer ici comment dialoguer avec une base de données MYSQL en Python. Le paquet "python-connector" est nécessaire pour effectuer l'exemple suivant :
 				\begin{lstlisting}[caption=Connexion à une base de données et insertion de données, captionpos=b]
 >>> unnom="KungFury"
 >>> import mysql.connector
@@ -144,24 +144,30 @@ kungfury  3061 12.0  0.3  74708 31304 pts/1    S+   14:13   0:00 nmap -oX - 81.1
 					\end{itemize}
 			\end{itemize}
 		\paragraph{}
-			Un aspect important de l'administration d'un parc informatique est de savoir qui est présent sur le réseau et surtout à quel moment. C'est pourquoi nous devons récupérer la date où le scanner voit la machine ou le service. Si nous voyons un service ouvert à un telle date et que depuis ce service n'existe plus, nous pouvons nous poser des questions. Quoi qu'il en soit pour voir les machines de façon régulière le script doit être automatisé. C'est pourquoi nous allons en faire un daemon pour qu'il puisse agir en permanence. Uns fois ces tâches effectuée, les résultats seront visibles depuis une interface WEB. Ainsi, nous pourrons voir d'un coup d'oeil voir les machines et les services présent. Il y aura même la possibilité de générer un fichier de règles en fonctions des services que nous voulons ou non. Si par exemple sur une machine un service inconnu est en écoute sur le port 12345, l'administrateur réseau pourra selectionner le fait qu'il ne veut pas le laisser passer. Le site générera un fichier de règles de pare-feu.
+			Un aspect important de l'administration d'un parc informatique est de savoir qui est présent sur le réseau et surtout à quel moment. C'est pourquoi nous devons récupérer la date où le scanner voit la machine ou le service. Si nous voyons un service ouvert à une telle date et que depuis ce service n'existe plus, nous pouvons nous poser des questions. Quoi qu'il en soit pour voir les machines de façon régulière le script doit être automatisé. C'est pourquoi nous allons en faire un daemon pour qu'il puisse agir en permanence. Uns fois ces tâches effectuée, les résultats seront visibles depuis une interface WEB. Ainsi, nous pourrons voir d'un coup d'oeil voir les machines et les services présents. Il y aura même la possibilité de générer un fichier de règles en fonctions des services que nous voulons ou non. Si par exemple, sur une machine, un service inconnu est en écoute sur le port 12345, l'administrateur réseau pourra sélectionner le fait qu'il ne désire pas le laisser passer. Le site générera un fichier de règles de pare-feu.
 \part{Présentation et installation de la solution}
 	\chapter{Prérequis}
 		\paragraph{}
-			Avant de se lancer dans l'installation de notre solution, plusieurs paquets doivent être présent sur la machine. Voici la liste des paquets necessaires, ils sont en général présent dans les dépôts classique d'une machine linux :
+			Avant de se lancer dans l'installation de notre solution, plusieurs paquets doivent être présents sur la machine. Voici la liste des paquets nécessaires, ils sont en général présent dans les dépôts classiques d'une machine linux (Debian, Ubuntu...) :
 			\begin{itemize}
 				\item python-mysql.connector
 				\item python-termcolor
 				\item python-netaddr
-				\item mysql
+				\item mysql-server
 				\item nmap
 			\end{itemize}
+			\begin{lstlisting}[caption=Installation des paquets nécessaires, captionpos=b]
+# apt-get update
+# apt-get install python-mysql.connector python-netaddr python-termcolor mysql-server nmap
+			\end{lstlisting}
+		\paragraph{}
+			Le script python utilise la version 2.7 de Python. Le daemon utilisera l'éxecutable "/usr/bin/python" pour executer le script.
 	\chapter{Le script d'installation}
 		\paragraph{}
-			Pour l'installation de notre solution nous proposons un script qui installera toute la partie BDD (dont nous verrons la structure plus tard) et daemon. Nous avons au départ donc deux fichiers à savoir "install\_scanner.sh" et "jajscan.py" dont nous parlerons plus tard. Le script d'installtion peut recevoir plusieurs arguments qui sont les suivants :
+			Pour l'installation de notre solution nous proposons un script qui installera toute la partie BDD (dont nous verrons la structure plus tard) et daemon. Nous avons au départ donc deux fichiers à savoir "install\_scanner.sh" et "jajscan.py" dont nous parlerons plus tard. Le script d'installation peut recevoir plusieurs arguments qui sont les suivants :
 			\begin{description}
 				\item install : Permet l'installation totale de la solution
-				\item reinstall : Supprimera tout les fichiers de configurations, d'interraction avec la BDD, le daemon et les logs. Puis relancera l'installation.
+				\item reinstall : Supprimera tous les fichiers de configurations, d'interaction avec la BDD, le daemon et les logs. Puis relancera l'installation.
 				\item clearbdd : Permet de vider les tables créées à l'installation
 				\item unistall : Supprimera la totalité de la solution et supprimera les tables dans la BDD.
 			\end{description}
@@ -188,7 +194,7 @@ Nom utilisateur : root
 Mot de passe :
 			\end{lstlisting}
 		\paragraph{}
-			Durant l'installation, un certain nombre de questions sont posées afin de bien configurer le daemon. Suite à cette installation plusieurs dossiers et fichiers sont créé :
+			Durant l'installation, un certain nombre de questions sont posés afin de bien configurer le daemon. Suite à cette installation plusieurs dossiers et fichiers sont créés :
 			\begin{figure}[ht]
 				\begin{center}\includegraphics[height=250pt,keepaspectratio]{/home/valentin/Python_scan/Rapport/IMG/Install.png}
 				\caption{\label{create_file} Fichiers et dossiers créés suite à l'installation}\end{center}
@@ -202,7 +208,7 @@ Mot de passe :
 				\item Le fichier de configuration du daemon
 			\end{itemize}
 		\paragraph{}
-			Ce fichier de configuration sera lu par le daemon pour lire les différents paramètres du scan. Ainsi, nous ne sommes pas obligé de reinstaller toute la solution si nous decidons de changer la cible du scan.
+			Ce fichier de configuration sera lu par le daemon pour lire les différents paramètres du scan. Ainsi, nous ne sommes pas obligés de réinstaller toute la solution si nous décidons de changer la cible du scan.
 			\begin{lstlisting}[caption=Exemple fichier de configuration, captionpos=b]
 ############# CONFIGURATION SCANNER PYTHON NMAP #############
 BDDAddr = 127.0.0.1
@@ -229,7 +235,7 @@ PortSMTP =
 			Le daemon offre la possibilité d'envoyer les résultats par mail (nous le verrons en détail plus tard). Dans ce fichier il faudra renseigner les différents paramètres de serveur mail (seulement SMTP). Le paramètre "speed" permet de spécifier si le daemon utilisera les threads NMAP ou non (mode fast pour les utiliser). En sachant que ce mode est moins précis et peut ne pas remonter les résultats demandé.
 	\chapter{La base de données}
 		\paragraph{}
-			Nous l'avons vu durant l'installation, il est necessaire de créer une base de données. Le script d'installation va lui créer les tables qui permettrons de stocker les informations receuilli par le scanner. Il y aura deux tables à savoir une table "machines" et une table "services". Elles seront configurée comme suit :\\
+			Nous l'avons vu durant l'installation, il est nécessaire de créer une base de données. Le script d'installation va lui créer les tables qui permettront de stocker les informations recueilli par le scanner. Il y aura deux tables à savoir une table "machines" et une table "services". Elles seront configurées comme suit :\\
 			\begin{table}[h]
 			\centering
 			\begin{tabular}{|c|c|}
@@ -279,20 +285,20 @@ PortSMTP =
 			\caption{\label{services_bdd} Table Services}
 			\end{table}
 		\paragraph{}
-			Ces tables sont lié par le "mid" qui est l'ID de la machine. Cette clé étrangère présente dans la table service permet de faire rapidement le lien avec la machine associée. La colonne "manage" est présente pour savoir si le service à été pris en compte par l'utilisateur via l'interface WEB.
+			Ces tables sont liées par le "mid" qui est l'ID de la machine. Cette clé étrangère présente dans la table "services" permet de faire rapidement le lien avec la machine associée. La colonne "manage" est présente pour savoir si le service a été pris en compte par l'utilisateur via l'interface WEB.
 	\chapter{Le daemon}
 		\paragraph{}
-			Nous avons vu l'installation et la base de données qui en découle. Maintenant, nous allons voir le daemon. Dans cette partie nous ne parlerons pas du script Python, mais de comment il est appelé et géré. Lors de la création du daemon, le script a pris en compte les options de l'utilisateur ainsi que le dossier courant. C'est-à-dire qu'il a créé un daemon sur mesure en fonction d'où se trouve le script d'installation et le scanner Python. Le scanner sera appelé avec un argument qui sera le fichier de configuration qui se trouve aussi dans le dossier du script d'installation. Le daemon pourra ainsi être lancé grâce à la commande :
+			Nous avons vu l'installation et la base de données qui en découlent. Maintenant, nous allons voir le daemon. Dans cette partie nous ne parlerons pas du script Python, mais de comment il est appelé et géré. Lors de la création du daemon, le script a pris en compte les options de l'utilisateur ainsi que le dossier courant. C'est-à-dire qu'il a créé un daemon sur mesure en fonction d'où se trouve le script d'installation et le scanner Python. Le scanner sera appelé avec un argument qui sera le fichier de configuration qui se trouve aussi dans le dossier du script d'installation. Le daemon pourra ainsi être lancé grâce à la commande :
 			\begin{lstlisting}
 			# service pythonnmap start
 			\end{lstlisting}
 		\paragraph{}
-			Le script Python tourera alors comme un service. Etant donné qu'il possède une boucle infini celui-ci continuera sont execution jusqu'à l'arrêt du service ou de la machine. Lorsque l'administrateur stop le service, celui-ci envoi le signal "KeyboardInterrupt" au script.
+			Le script Python tournera alors comme un service. Etant donné qu'il possède une boucle infini celui-ci continuera sont éxecution jusqu'à l'arrêt du service ou de la machine. Lorsque l'administrateur stop le service, celui-ci envoie le signal "KeyboardInterrupt" au script.
 \part{Le script Python}
 	\chapter{D'un point de vue général}
 		\paragraph{}
-			Dans cette partie nous allons le fonctionnement général du script. Nous allons voir son file d'execution sans vraiment détailler les fonctions qu'il parcours. Le détail de ces fonctions se fera dans la partie suivante.\\
-			Comme nous l'avons vu dans le chapitre sur le daemon, celui-ci fait appel au script avec un argument. Cet argument sert à localiser le fichier de configuration. S'il n'est pas renseigner, le script considérera qu'il se trouve dans le dossier courant sous le nom de "pythonnmap.conf" :
+			Dans cette partie nous allons le fonctionnement général du script. Nous allons voir son file d'éxecution sans vraiment détailler les fonctions qu'il parcourt. Le détail de ces fonctions se fera dans la partie suivante.\\
+			Comme nous l'avons vu dans le chapitre sur le daemon, celui-ci fait appel au script avec un argument. Cet argument sert à localiser le fichier de configuration. S'il n'est pas renseigné, le script considérera qu'il se trouve dans le dossier courant sous le nom de "pythonnmap.conf" :
 			\begin{lstlisting}[caption=Récupération path fichier configuration, captionpos=b]
 if len(sys.argv) == 2:
     path_conf=sys.argv[1]
@@ -300,11 +306,11 @@ else:
     path_conf="pythonnmap.conf"
 			\end{lstlisting}
 		\paragraph{}
-			Une fois le path récupéré le script commence sa boucle infini. Il va alors commencer son scan en fonction des paramètres présents dans le fichier de configuration. Quel que soit la plage IP renseignée, le scanner va faire les machines une par une. Cela apporte une meilleur visibilité lors d'un scan sur un grand parc. Si dans le fichier de configuration l'administrateur a spécifié "192.168.1.0/24", le script déduira les IP possible. De même pour une plage IP de la forme "192.168.1.24-52".
+			Une fois le path récupéré le script commence sa boucle infini. Il va alors commencer son scan en fonction des paramètres présents dans le fichier de configuration. Quelle que soit la plage IP renseignée, le scanner va faire les machines une par une. Cela apporte une meilleure visibilité lors d'un scan sur un grand parc. Si dans le fichier de configuration l'administrateur a spécifié "192.168.1.0/24", le script déduira les IP possible. De même pour une plage IP de la forme "192.168.1.24-52".
 		\paragraph{}
-			Pour chaque adresse IP, un scan sera effectué en fonction des ports renseigné et du mode voulu (fast ou slow). Une fois les informations récupérée, le programme va stocker ces informations dans deux structures. Une structure "Host" et une structure "Service" qui correspondent aux tables présentes dans la base de données. La structure "Host" disposera d'un tableau de "Service" pour qu'une machine soit liée à tous ses services.
+			Pour chaque adresse IP, un scan sera effectué en fonction des ports renseignés et du mode voulu (fast ou slow). Une fois les informations récupérées, le programme va stocker ces informations dans deux structures. Une structure "Host" et une structure "Service" qui correspondent aux tables présentes dans la base de données. La structure "Host" disposera d'un tableau de "Service" pour qu'une machine soit liée à tous ses services.
 		\paragraph{}
-			Le stockage des machines étant terminé, le programme va maintenant insérer les informations dans la base de données. Plusieurs cas sont alors possible :
+			Le stockage des machines étant terminé, le programme va maintenant insérer les informations dans la base de données. Plusieurs cas sont alors possibles :
 			\begin{itemize}
 				\item La machine n'est pas connu dans la BDD : Le script fera une insertion de toutes les informations
 				\item La machine est connu dans la BDD : Le script fera seulement un update de la date (colonne "last\_view")
@@ -312,7 +318,7 @@ else:
 				\item Le service est connu dans la BDD : Le script va alors analyser son nom, son état, sa banner et sa version en fonction de la BDD. Il fera un update des informations qui auront changées. Il fera aussi un update de la date (colonne "last\_view")
 			\end{itemize}
 		\paragraph{}
-			Une fois l'insertion en BDD terminée, le script va soit se terminer et recommencer, ou alors envoyer les résultats par mail avant de recommencer. Si c'est le cas, le script va remplir un fichier ".csv" (fichier tableur) qu'il mettra en pièce jointe du mail qui sera envoyé. L'envoi du mail se basera aussi sur les informations renseignées dans le fichier de configuration.
+			Une fois l'insertion en BDD terminée, le script va soit terminer et recommencer, ou alors envoyer les résultats par mail avant de recommencer. Si c'est le cas, le script va remplir un fichier ".csv" (fichier tableur) qu'il mettra en pièce jointe du mail qui sera envoyé. L'envoi du mail se basera aussi sur les informations renseignées dans le fichier de configuration.
 	\chapter{Fonctions}
 		\section{analyze()}
 			{\setlength{\parindent}{0cm}
@@ -465,7 +471,7 @@ else:
 			}
 			$Arguments :$
 			\begin{description}
-				\item reseau : Réseau scannée par le scanner\\\
+				\item reseau : Réseau scannée par le scanner\\
 			\end{description}
 			$Description : $ Cette fonction permet l'envoi des résultats du scanner par mail. Elle fera d'abord appel à la fonction "result\_to\_csv\_file" pour ensuite joindre le fichier généré en pièce jointe. Le programme enverra en fonction des paramètres renseignés dans le fichier "pythonnmap.conf" et inscrira dans l'objet du mail "Resultat script" et dans le corps "Je suis le script python et voici les resultats pour le reseau ...".
 		\section{start\_scan()}
