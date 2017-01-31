@@ -1,8 +1,10 @@
 <?php
 
-  $rulesFile = fopen("rules_anchor.txt", "a");
+include_once 'includes/credentials.php';
 
-  $bdd = new PDO('mysql:host=127.0.0.1;dbname=Scanner', 'root', 'azerty');
+  $rulesFile = fopen("rules_anchor.txt", "w+");
+
+  $bdd = new PDO('mysql:host='.HOST.';dbname='.DBNAME, USER, PWD);
   if (!$bdd) {
       die('Connexion impossible : ' . mysql_error());
   }

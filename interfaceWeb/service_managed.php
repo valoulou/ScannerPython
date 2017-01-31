@@ -1,3 +1,9 @@
+<?php
+
+include_once 'includes/credentials.php';
+
+ ?>
+
 <html>
 
   <head>
@@ -14,7 +20,7 @@
 
     <?php
 
-    $bdd = new PDO('mysql:host=127.0.0.1;dbname=Scanner', 'root', 'azerty');
+    $bdd = new PDO('mysql:host='.HOST.';dbname='.DBNAME, USER, PWD);
     if (!$bdd) {
         die('Connexion impossible : ' . mysql_error());
     }

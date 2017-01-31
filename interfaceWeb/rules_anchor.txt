@@ -1,8 +1,6 @@
 block quick proto tcp from any to 192.168.20.10 port 22
 block quick proto tcp from any to 192.168.20.103 port 22
-block quick proto tcp from any to 192.168.20.10 port 22
-block quick proto tcp from any to 192.168.20.103 port 22
-block quick proto tcp from any to 192.168.20.10 port 22
-block quick proto tcp from any to 192.168.20.103 port 22
-block quick proto tcp from any to 192.168.20.10 port 22
-block quick proto tcp from any to 192.168.20.103 port 22
+block quick proto tcp from any to 192.168.20.104 port 22
+block quick proto tcp from any to 192.168.20.106 port 80
+block quick proto tcp from any to 192.168.20.107 port 22
+block quick proto tcp from any to 192.168.20.111 port 22

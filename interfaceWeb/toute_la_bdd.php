@@ -1,10 +1,14 @@
+<?php
+
+include_once 'includes/credentials.php';
+
+ ?>
+
 <html>
 
     <head>
         <meta charset="utf-8" />
         <link rel="stylesheet" href="style.css" />
-        <script src="event.js" type="text/javascript"></script>
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <title>Projet Scanner</title>
     </head>
 
@@ -14,7 +18,7 @@
 
       <?php
 
-      $bdd = new PDO('mysql:host=127.0.0.1;dbname=Scanner', 'root', 'azerty');
+      $bdd = new PDO('mysql:host='.HOST.';dbname='.DBNAME, USER, PWD);
       if (!$bdd) {
           die('Connexion impossible : ' . mysql_error());
       }
@@ -63,9 +67,26 @@
             <td>
               <form action="script.php" method="post">
                 <select type="text" name="manageValue" size="1" />
-                  <option></option>
+                  <option>
+                    <?php
+                    switch ($row["manage"]) {
+                      case 0: ?>
+                      Non Managé
+                    <?php
+                      break;
+                      case 1: ?>
+                      Laissé Ouvert
+                    <?php
+                          break;
+                      case 2: ?>
+                      Est Fermé
+                    <?php
+                          break;
+                      }
+                     ?>
+                  </option>
                   <option value=<?php echo htmlentities("1;" . $row["sid"] , ENT_QUOTES, "utf-8");?>>Laisser Ouvert</option>
-                  <option value=<?php echo htmlentities("2;" . $row["sid"] , ENT_QUOTES, "utf-8");?>>Le Fermer</option>
+                  <option value=<?php echo htmlentities("2;" . $row["sid"] . ";" . $row["proto"] . ";" . $row["ip"] . ";" . $row["port"]  , ENT_QUOTES, "utf-8");?>>Le Fermer</option>
                 </select>
                 <input type="submit" value="Valider">
               </form>
