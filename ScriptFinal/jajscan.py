@@ -16,6 +16,8 @@ from email.MIMEBase import MIMEBase
 from email import encoders
 from netaddr import IPNetwork
 import itertools
+import threading
+import fileinput
 
 ## Documentation de la class Host
 #
@@ -183,6 +185,58 @@ class Service:
     def banner(self, b):
         self._banner = b
 
+class TimeOutThread(threading.Thread):
+    def __init__(self):
+        self.mode_compt = False
+        self.timetostop = 0
+        super(TimeOutThread, self).__init__()
+    def run(self):
+        timetest = 0
+        self.timetostop = get_sec(readconf("SetTimeOut"))
+
+        if self.timetostop == 0 and readconf("UseAutomaticTimeOut") == 'y':
+            self.mode_compt = True
+            self.timetostop = self.timetostop +1
+            print 'ModeCompt'
+
+        self.running = True
+
+        while self.running and (timetest < self.timetostop):
+            time.sleep(1)
+            print "On tourne"
+            if self.mode_compt:
+                self.timetostop = self.timetostop +1
+                #print 'ModeCompt'+str(timetostop)
+            else:
+                timetest = timetest + 1
+
+        if self.running:
+            print colored ('Kill NMAP', 'red')
+            os.system('killall nmap')
+    def stop(self):
+        print colored('Kill thread', 'red')
+        if self.mode_compt:
+            print 'Set de la conf'
+            setconf("SetTimeOut", get_time(self.timetostop+60))
+        self.running = False
+
+class ScannerThread(threading.Thread):
+    def __init__(self, currentip, simplifie):
+        self.result = None
+        self.currentip = currentip
+        self.simplifie = simplifie
+        print self.currentip
+        super(ScannerThread, self).__init__()
+    def run(self):
+        print 'My thread'
+        try:
+            if self.simplifie:
+                self.result = start_scan(self.currentip, readconf("Port"), readconf("Speed"), True)
+            else:
+                self.result = start_scan(self.currentip, readconf("Port"), readconf("Speed"), False)
+        except Exception, e:
+            print 'Exception ScannerThread'
+
 ## Permet d'inserer les services associes a une machine dans la BDD
 #  @param mid Identifiant de la machine en BDD
 #  @param listport Liste des ports lies a la machine
@@ -201,13 +255,11 @@ def insertport(mid, listport, date, cursor):
                 print colored('Error INSERT PORT %s:' % e.args[0], 'red')
                 writelog("[!] Erreur insertion port")
                 sys.exit(4)
-            bdd.commit()
         else:
             try:
                 print colored('\t\tUpdate du port %s...' % actuport.port, 'blue')
                 cursor.execute("""
                 UPDATE services SET last_view = %s WHERE port = %s AND mid = %s""", (date, actuport.port, mid))
-                bdd.commit()
             except mysql.connector.Error, e:
                 print colored('Error UDPATE PORT %s:' % e.args[0], 'red')
                 writelog("[!] Erreur update port")
@@ -237,7 +289,6 @@ def check_element_service(check, newval, port, mid, cursor):
         print colored('\t\t\tUpdate %s...' % check, 'blue')
         query = 'UPDATE services SET '+check+' = "'+newval+'" WHERE port = '+str(port)+' AND mid = '+str(mid)
         cursor.execute(query)
-        bdd.commit()
     except mysql.connector.Error, e:
         print colored('Error UDPATE PORT CHECK VERSION %s:' % e.args[0], 'red')
         writelog("[!] Erreur update port check version")
@@ -268,7 +319,6 @@ def insertmachine(machine, cursor):
             print colored('Error UPDATE MACHINE %s:' % e.args[0], 'red')
             writelog("[!] Erreur update machine")
             sys.exit(3)
-    bdd.commit()
 
 ## Permet de retourner le MID d'une machine en fonction de son IP
 # @param ip IP de la machine que l'on recherche
@@ -328,6 +378,25 @@ def datestr(tmp_time):
     tmp_time = str(tmp_time.day)+'/'+str(tmp_time.month)+'/'+str(tmp_time.year)+' '+str(tmp_time.hour)+':'+str(tmp_time.minute)+':'+str(tmp_time.second)
     return tmp_time
 
+## Permet de convertir un temps HH:MM:SS en secondes
+# @param time_str Temps a convertir
+# @return int Temps converti
+
+def get_sec(time_str):
+    h, m, s = time_str.split(':')
+    return int(h) * 3600 + int(m) * 60 + int(s)
+
+## Permet de convertir des secondes en un temps HH:MM:SS
+# @param seconds Temps a convertir
+# @return str Temps converti
+
+def get_time(seconds):
+    m, s = divmod(seconds, 60)
+    h, m = divmod(m, 60)
+    time="%02d:%02d:%02d" % (h, m, s)
+    return time
+
+
 ## Permet de remplir les structure Host et Service en fonction de l'analyse NMAP
 # @param nm Objet de l'analyse NMAP
 
@@ -335,6 +404,9 @@ def analyze(nm):
     proto_yes=['tcp', 'udp']
     print colored('Analyse des machines...(%s)' % datestr(datetime.now()), 'yellow')
     writelog("[-] Analyse des machines")
+    if not nm.all_hosts():
+        writelog("[-] Machine down");
+        return 
     listhost=[]
     for host in nm.all_hosts():
         mon_host = Host()
@@ -371,11 +443,16 @@ def analyze(nm):
 # @param mode Fast ou Slow pour un scan threade ou non
 # @return nm Retourne le resultat du scan
 
-def start_scan(ip, port, mode):
+def start_scan(ip, port, mode, simplifie):
     print colored('Scan en cours... (%s)' % datestr(datetime.now()), 'yellow')
     nm = nmap.PortScanner()
 
     try:
+        if simplifie:
+            if port == 'all':
+                nm.scan(ip, arguments='-p- -sV -f')
+            else:
+                nm.scan(ip, port, arguments='-sV -f')
         if port == 'all':
             if mode == 'fast':
                 nm.scan(ip, arguments='-p- --max-parallelism=100 -T5 --max-hostgroup=256 --script banner -sV -f')
@@ -386,7 +463,7 @@ def start_scan(ip, port, mode):
             if mode == 'fast':
                 nm.scan(ip, port, arguments='--max-parallelism=100 -T5 --max-hostgroup=256 --script banner -sV -f')
             else:
-                nm.scan(ip, port, arguments='-sV --script banner')
+                nm.scan(ip, port, arguments='-sV --script banner -f')
     except KeyboardInterrupt:
             interruptprogram()   
 
@@ -397,13 +474,16 @@ def start_scan(ip, port, mode):
 # @param listhost Liste des machines scannees sur le reseau
 
 def start_insert(listhost):
+    bdd=connect_bdd()
     print colored('Insertion dans la BDD...(%s)\n' % datestr(datetime.now()), 'yellow')
     writelog("[-] Insertion en base de donnees")
 
     for currenthost in listhost:
-        insertmachine(currenthost, cursor)
-        insertport(returnmid(currenthost.ip, cursor), currenthost.serv, currenthost.date, cursor)
+        insertmachine(currenthost, bdd.cursor())
+        insertport(returnmid(currenthost.ip, bdd.cursor()), currenthost.serv, currenthost.date, bdd.cursor())
     print colored('\nInsertion terminee!(%s)' % datestr(datetime.now()), 'green')
+    bdd.commit()
+    bdd.close()
 
 ## Permet d'enregistrer les informations de la BDD dans un fichier txt
 # @param temptotal Temps total de l'analyse
@@ -530,6 +610,16 @@ def readconf(param):
         writelog("[!] Erreur lecture fichier de configuration")
         sys.exit(0)
 
+## Permet de setter une valeur du fichier de configuration
+# @param valreplace Parametre a setter
+# @parem newval Nouvelle valeur du parametre
+
+def setconf(valreplace, newval):
+    for line in fileinput.input([path_conf], inplace=True):
+        if line.strip().startswith(valreplace):
+            line = valreplace+' = '+newval+'\n'
+        sys.stdout.write(line)
+
 ## Permet de gerer l'interruption du programme par interruption clavier.
 ## Ce signal est aussi utilise par le daemon.
 # @param *args Arguments de l'interruption
@@ -563,6 +653,24 @@ def define_ip_addr(rangeip):
         ip_list.append(rangeip)
         return ip_list
 
+## Connexion a la BDD
+
+def connect_bdd():
+    print colored('Connexion a la BDD... (%s)' % datestr(datetime.now()), 'yellow')
+
+    try:
+        ## @var bdd
+        # Variable de connexion a la BDD
+        bdd = mysql.connector.connect(host=readconf("BDDAddr"),user=readconf("BDDUser"),password=readconf("BDDPass"), database=readconf("BDDName"))
+        cursor = bdd.cursor()
+    except mysql.connector.Error, e:
+        print colored('Error %s:' % e.args[0], 'red')
+        writelog("[!] Erreur connexion BDD")
+        sys.exit(1)
+
+    print colored('Connexion reussi! (%s)\n' % datestr(datetime.now()), 'green')
+    return bdd
+
 if len(sys.argv) == 2:
     path_conf=sys.argv[1]
 else:
@@ -572,47 +680,58 @@ while True:
 
     startTime = datetime.now()
 
-    try:
-        writelog("[*] Scan en cours pour le reseau "+readconf("Reseau")+" pour les port "+readconf("Port")+" en mode "+readconf("Speed"))
+    writelog("[*] Scan en cours pour le reseau "+readconf("Reseau")+" pour les port "+readconf("Port")+" en mode "+readconf("Speed"))
 
-        for ipactu in define_ip_addr(readconf("Reseau")):
+    for ipactu in define_ip_addr(readconf("Reseau")):
 
-            writelog("[**] Scan machine "+str(ipactu)+" en cours")
+        writelog("[**] Scan machine "+str(ipactu)+" en cours")
 
-            startTimeMachine = datetime.now()
+        startTimeMachine = datetime.now()
 
-            resultscan = start_scan(str(ipactu), readconf("Port"), readconf("Speed"))
+        try:
+            scanner = ScannerThread(str(ipactu), False)
 
-            print colored('Connexion a la BDD... (%s)' % datestr(datetime.now()), 'yellow')
+            scanner.start()
 
+            if readconf("UseTimeOut") == 'y':
+                timeout = TimeOutThread()
+                timeout.start()
+
+            scanner.join()
+        except KeyboardInterrupt:
+            timeout.stop()
+            interruptprogram()
+
+        if scanner.result == None:
+            writelog("[!] Time out pour la machine "+str(ipactu))
+            writelog("[*] Lancement du scan simplifie pour la machine "+str(ipactu))
             try:
-                ## @var bdd
-                # Variable de connexion a la BDD
-                bdd = mysql.connector.connect(host=readconf("BDDAddr"),user=readconf("BDDUser"),password=readconf("BDDPass"), database=readconf("BDDName"))
-                cursor = bdd.cursor()
-            except mysql.connector.Error, e:
-                print colored('Error %s:' % e.args[0], 'red')
-                writelog("[!] Erreur connexion BDD")
-                sys.exit(1)
+                scanner = ScannerThread(str(ipactu), True)
+                scanner.start()
+                if readconf("UseTimeOut") == 'y':
+                    timeout = TimeOutThread()
+                    timeout.start()
+                scanner.join()
+            except KeyboardInterrupt:
+                timeout.stop()
+                interruptprogram()
+            if scanner.result == None:
+                writelog("[!] Scan impossible pour la machine "+str(ipactu))
+            else:
+                timeout.stop()
+        else:
+            timeout.stop()
+            analyze(scanner.result)
 
-            print colored('Connexion reussi! (%s)\n' % datestr(datetime.now()), 'green')
+        temp_exec_machine = datetime.now() - startTimeMachine
 
-            analyze(resultscan)
+        print colored('Temps d execution machine : %s' % temp_exec_machine, 'green')
 
-            temp_exec_machine = datetime.now() - startTimeMachine
+        if readconf("Envoimail") == "y":
+            send_result_mail(readconf("Reseau"))
 
-            print colored('Temps d execution machine : %s' % temp_exec_machine, 'green')
+        writelog("[**] Scan termine pour la machine "+str(ipactu)+" Temps total : "+str(temp_exec_machine))
 
-            if readconf("Envoimail") == "y":
-                send_result_mail(readconf("Reseau"))
-
-            bdd.close()
-
-            writelog("[**] Scan termine pour la machine "+str(ipactu)+" Temps total : "+str(temp_exec_machine))
-
-        temp_exec = datetime.now() - startTime
-        writelog("[*]Scan total termine. Temps total : "+str(temp_exec))
-        print colored('Temps d execution total : %s' % temp_exec, 'green')
-
-    except KeyboardInterrupt:
-        interruptprogram()
+    temp_exec = datetime.now() - startTime
+    writelog("[*]Scan total termine. Temps total : "+str(temp_exec))
+    print colored('Temps d execution total : %s' % temp_exec, 'green')

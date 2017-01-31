@@ -225,6 +225,15 @@ WRITE_SCRIPT
 
 chmod +x /etc/init.d/pythonnmap
 
+read -p "Voulez-vous utiliser un Time Out ? [y/n]" reponsetime
+
+if [ $reponsetime == "y" ];then
+  read -p "Utiliser le Time Out automatique (Se basera sur la premiere machine scanee)? [y/n]" reponseauto
+  if [$reponseauto == "n"];then
+    read -p "Specifiez le temps (00:00:00) : " tempstimeout
+  fi
+fi
+
 read -p "Voulez-vous recevoir les resultats du scan par mail (SMTP uniquement)? [y/n]" reponse
 
 if [ $reponse == "y" ];then
@@ -247,6 +256,14 @@ echo "## Format : PortDebut-PortFin ou mettre all pour scanner tout les ports" >
 echo 'Port = '$port_analyze >> pythonnmap.conf
 echo "## Format : slow ou fast (le mode fast est moins precis)" >> pythonnmap.conf
 echo 'Speed = '$speed >> pythonnmap.conf
+echo "################ GESTION TIMEOUT ################" >> pythonnmap.conf
+echo 'UseTimeOut = '$reponsetime >> pythonnmap.conf
+echo 'UseAutomaticTimeOut = '$reponseauto >> pythonnmap.conf
+if [ $reponsetime == "n" ] || [ $reponseauto == "y" ];then
+  echo "SetTimeOut = 00:00:00" >> pythonnmap.conf
+else
+  echo 'SetTimeOut = '$tempstimeout >> pythonnmap.conf
+fi
 echo "################ CONFIGURATION MAIL SCANNER PYTHON NMAP ################" >> pythonnmap.conf
 echo "## Mettre y pour activer l envoie de mail" >> pythonnmap.conf
 echo 'Envoimail = '$reponse >> pythonnmap.conf
