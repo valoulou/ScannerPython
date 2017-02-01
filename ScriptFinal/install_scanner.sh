@@ -229,7 +229,7 @@ read -p "Voulez-vous utiliser un Time Out ? [y/n]" reponsetime
 
 if [ $reponsetime == "y" ];then
   read -p "Utiliser le Time Out automatique (Se basera sur la premiere machine scanee)? [y/n]" reponseauto
-  if [$reponseauto == "n"];then
+  if [ $reponseauto == "n" ];then
     read -p "Specifiez le temps (00:00:00) : " tempstimeout
   fi
 fi

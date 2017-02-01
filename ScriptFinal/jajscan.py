@@ -197,13 +197,11 @@ class TimeOutThread(threading.Thread):
         if self.timetostop == 0 and readconf("UseAutomaticTimeOut") == 'y':
             self.mode_compt = True
             self.timetostop = self.timetostop +1
-            print 'ModeCompt'
 
         self.running = True
 
         while self.running and (timetest < self.timetostop):
             time.sleep(1)
-            print "On tourne"
             if self.mode_compt:
                 self.timetostop = self.timetostop +1
                 #print 'ModeCompt'+str(timetostop)
@@ -211,10 +209,8 @@ class TimeOutThread(threading.Thread):
                 timetest = timetest + 1
 
         if self.running:
-            print colored ('Kill NMAP', 'red')
             os.system('killall nmap')
     def stop(self):
-        print colored('Kill thread', 'red')
         if self.mode_compt:
             print 'Set de la conf'
             setconf("SetTimeOut", get_time(self.timetostop+60))
@@ -225,17 +221,15 @@ class ScannerThread(threading.Thread):
         self.result = None
         self.currentip = currentip
         self.simplifie = simplifie
-        print self.currentip
         super(ScannerThread, self).__init__()
     def run(self):
-        print 'My thread'
         try:
             if self.simplifie:
                 self.result = start_scan(self.currentip, readconf("Port"), readconf("Speed"), True)
             else:
                 self.result = start_scan(self.currentip, readconf("Port"), readconf("Speed"), False)
         except Exception, e:
-            print 'Exception ScannerThread'
+            print colored('Scanner interrompu', 'red')
 
 ## Permet d'inserer les services associes a une machine dans la BDD
 #  @param mid Identifiant de la machine en BDD
@@ -449,21 +443,22 @@ def start_scan(ip, port, mode, simplifie):
 
     try:
         if simplifie:
+            print colored('Scan simplifie... (%s)' % datestr(datetime.now()), 'yellow')
             if port == 'all':
-                nm.scan(ip, arguments='-p- -sV -f')
+                nm.scan(ip, arguments='-p- -sS -F')
             else:
-                nm.scan(ip, port, arguments='-sV -f')
+                nm.scan(ip, port, arguments='-sS -F')
         if port == 'all':
             if mode == 'fast':
-                nm.scan(ip, arguments='-p- --max-parallelism=100 -T5 --max-hostgroup=256 --script banner -sV -f')
+                nm.scan(ip, arguments='-p- --max-parallelism=100 -T5 --max-hostgroup=256 --script banner -sV')
             else:
-                nm.scan(ip, arguments='-sV --script banner -p- -f')
+                nm.scan(ip, arguments='-sV --script banner -p-')
 
         else:
             if mode == 'fast':
-                nm.scan(ip, port, arguments='--max-parallelism=100 -T5 --max-hostgroup=256 --script banner -sV -f')
+                nm.scan(ip, port, arguments='--max-parallelism=100 -T5 --max-hostgroup=256 --script banner -sV')
             else:
-                nm.scan(ip, port, arguments='-sV --script banner -f')
+                nm.scan(ip, port, arguments='-sV --script banner')
     except KeyboardInterrupt:
             interruptprogram()   
 
@@ -686,6 +681,8 @@ while True:
 
         writelog("[**] Scan machine "+str(ipactu)+" en cours")
 
+        print colored('\nMachine %s' % str(ipactu), 'yellow')
+
         startTimeMachine = datetime.now()
 
         try:
@@ -699,7 +696,8 @@ while True:
 
             scanner.join()
         except KeyboardInterrupt:
-            timeout.stop()
+            if 'timeout' in locals():
+                timeout.stop()
             interruptprogram()
 
         if scanner.result == None:
@@ -718,9 +716,11 @@ while True:
             if scanner.result == None:
                 writelog("[!] Scan impossible pour la machine "+str(ipactu))
             else:
-                timeout.stop()
+                if 'timeout' in locals():
+                    timeout.stop()
         else:
-            timeout.stop()
+            if 'timeout' in locals():
+                timeout.stop()
             analyze(scanner.result)
 
         temp_exec_machine = datetime.now() - startTimeMachine
