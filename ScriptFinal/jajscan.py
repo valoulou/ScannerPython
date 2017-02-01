@@ -204,15 +204,13 @@ class TimeOutThread(threading.Thread):
             time.sleep(1)
             if self.mode_compt:
                 self.timetostop = self.timetostop +1
-                #print 'ModeCompt'+str(timetostop)
             else:
                 timetest = timetest + 1
 
         if self.running:
             os.system('killall nmap')
     def stop(self):
-        if self.mode_compt:
-            print 'Set de la conf'
+        if self.mode_compt and self.timetostop > 2:
             setconf("SetTimeOut", get_time(self.timetostop+60))
         self.running = False
 
@@ -399,7 +397,7 @@ def analyze(nm):
     print colored('Analyse des machines...(%s)' % datestr(datetime.now()), 'yellow')
     writelog("[-] Analyse des machines")
     if not nm.all_hosts():
-        writelog("[-] Machine down");
+        writelog("[-] Machine down")
         return 
     listhost=[]
     for host in nm.all_hosts():
@@ -721,7 +719,10 @@ while True:
         else:
             if 'timeout' in locals():
                 timeout.stop()
-            analyze(scanner.result)
+            if not scanner.result.all_hosts():
+                writelog("[-] Machine down")
+            else:
+                analyze(scanner.result)
 
         temp_exec_machine = datetime.now() - startTimeMachine
 
