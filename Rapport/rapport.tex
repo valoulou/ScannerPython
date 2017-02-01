@@ -186,6 +186,8 @@ Reseau a analyser [0.0.0.0/24] : 192.168.10.0/24
 Port a analyser [Port_debut-Port_fin / all] : all
 NOTE : En vitesse fast l analyse est moins precise !
 Vitesse d analyse [fast/slow] : slow
+Voulez-vous utiliser un Time Out ? [y/n]y
+Utiliser le Time Out automatique (Se basera sur la premiere machine scanee)? [y/n]y
 Voulez-vous recevoir les resultats du scan par mail (SMTP uniquement)? [y/n]n
 Creation du fichier de configuration...
 Creation des script SQL...
@@ -220,6 +222,10 @@ Reseau = 192.168.10.0/24
 Port = all
 ## Format : slow ou fast (le mode fast est moins precis)
 Speed = slow
+################ GESTION TIMEOUT ################
+UseTimeOut = y
+UseAutomaticTimeOut = y
+SetTimeOut = 00:00:00
 ########### CONFIGURATION MAIL SCANNER PYTHON NMAP ###########
 ## Mettre y pour activer l envoie de mail
 Envoimail = n
@@ -232,7 +238,7 @@ PortSMTP =
 
 			\end{lstlisting}
 		\paragraph{}
-			Le daemon offre la possibilité d'envoyer les résultats par mail (nous le verrons en détail plus tard). Dans ce fichier il faudra renseigner les différents paramètres de serveur mail (seulement SMTP). Le paramètre "speed" permet de spécifier si le daemon utilisera les threads NMAP ou non (mode fast pour les utiliser). En sachant que ce mode est moins précis et peut ne pas remonter les résultats demandé.
+			Le daemon offre la possibilité d'envoyer les résultats par mail et de gérer un time out (nous le verrons en détail plus tard). Dans ce fichier il faudra renseigner les différents paramètres de serveur mail (seulement SMTP). Le paramètre "speed" permet de spécifier si le daemon utilisera les threads NMAP ou non (mode fast pour les utiliser). En sachant que ce mode est moins précis et peut ne pas remonter les résultats demandé. De plus, il est possible de spécifier une time out. Soit en le fixant, soit en utilisant la mode "automatique". Celui-ci se basera sur la première machine du scan et ajoutera une minute (marge d'erreur).
 	\chapter{La base de données}
 		\paragraph{}
 			Nous l'avons vu durant l'installation, il est nécessaire de créer une base de données. Le script d'installation va lui créer les tables qui permettront de stocker les informations recueilli par le scanner. Il y aura deux tables à savoir une table "machines" et une table "services". Elles seront configurées comme suit :\\
@@ -308,7 +314,7 @@ else:
 		\paragraph{}
 			Une fois le path récupéré le script commence sa boucle infini. Il va alors commencer son scan en fonction des paramètres présents dans le fichier de configuration. Quelle que soit la plage IP renseignée, le scanner va faire les machines une par une. Cela apporte une meilleure visibilité lors d'un scan sur un grand parc. Si dans le fichier de configuration l'administrateur a spécifié "192.168.1.0/24", le script déduira les IP possible. De même pour une plage IP de la forme "192.168.1.24-52".
 		\paragraph{}
-			Pour chaque adresse IP, un scan sera effectué en fonction des ports renseignés et du mode voulu (fast ou slow). Une fois les informations récupérées, le programme va stocker ces informations dans deux structures. Une structure "Host" et une structure "Service" qui correspondent aux tables présentes dans la base de données. La structure "Host" disposera d'un tableau de "Service" pour qu'une machine soit liée à tous ses services.
+			Pour chaque adresse IP, un scan sera effectué en fonction des ports renseignés et du mode voulu (fast ou slow). Une fois les informations récupérées, le programme va stocker ces informations dans deux structures. Une structure "Host" et une structure "Service" qui correspondent aux tables présentes dans la base de données. La structure "Host" disposera d'un tableau de "Service" pour qu'une machine soit liée à tous ses services. Si jamais le time out est atteint, le programme va alors lancer un nouveau scan avec des options sensées rendre le scan plus rapide. Il sera normalement moins complet mais aboutira à quelques résultats. Si encore une fois ce n'est pas le cas, le programme passera à la machine suivante.
 		\paragraph{}
 			Le stockage des machines étant terminé, le programme va maintenant insérer les informations dans la base de données. Plusieurs cas sont alors possibles :
 			\begin{itemize}
@@ -328,7 +334,7 @@ else:
 			\begin{description}
 				\item nm : Objet NMAP\\
 			\end{description}
-			$Description : $ Cette fonction permet de trier les informations stockées dans l'objet NMAP. Elle remplira les structures "Host" et "Service" puis appelera la fonction "start\_insert()"
+			$Description : $ Cette fonction permet de trier les informations stockées dans l'objet NMAP. Elle remplira les structures "Host" et "Service" puis appellera la fonction "start\_insert()"
 		\section{check\_element\_service()}
 			{\setlength{\parindent}{0cm}
 			$Nom :$ check\_element\_service\\\\
@@ -347,7 +353,7 @@ else:
 			$Nom :$ connect\_bdd\\\\
 			}
 			$Arguments :$\\\\
-			$Description : $ Cette fonction permet la connexion avec la BDD en fonction des informations stockées dans le fichier de configuration "pythonnmap.conf". Elle retournera un objet "mysql.connector" qui permettra le dialogue vec la BDD ainsi que la récupération du cursor pour les requêtes SQL.
+			$Description : $ Cette fonction permet la connexion avec la BDD en fonction des informations stockées dans le fichier de configuration "pythonnmap.conf". Elle retournera un objet "mysql.connector" qui permettra le dialogue avec la BDD ainsi que la récupération du cursor pour les requêtes SQL.
 		\section{datestr()}
 			{\setlength{\parindent}{0cm}
 			$Nom :$ datestr\\\\
@@ -365,7 +371,7 @@ else:
 			\begin{description}
 				\item rangeip : Plage IP\\
 			\end{description}
-			$Description : $ Cette fonction permet de déuire les IP possible dans une plage IP. Cette fonction attend en paramètre soit la forme "X.X.X.0/XX" ou la forme "X.X.X.X-X". Ainsi, la fonction retournera une liste d'IP pour pouvoir scanner les IP une par une.
+			$Description : $ Cette fonction permet de déduire les IP possible dans une plage IP. Cette fonction attend en paramètre soit la forme "X.X.X.0/XX" ou la forme "X.X.X.X-X". Ainsi, la fonction retournera une liste d'IP pour pouvoir scanner les IP une par une.
 		\section{insertmachine()}
 			{\setlength{\parindent}{0cm}
 			$Nom :$ insertmachine\\\\
@@ -375,7 +381,7 @@ else:
 				\item machine : Objet "Host"
 				\item cursor : Curseur lié à la BDD\\
 			\end{description}
-			$Description : $ Cette fonction permet d'insérer une machine dans la BDD. Grâce à l'objet "Host", passé en paramètre, la fonction pourra récupérer facilement les informations liées à une machine. A savoir son IP, son FQDN et la date où elle a été vu.
+			$Description : $ Cette fonction permet d'insérer une machine dans la BDD. Grâce à l'objet "Host", passé en paramètre, la fonction pourra récupérer facilement les informations liées à une machine. A savoir son IP, son FQDN et la date où elle a été vue.
 		\section{insertport()}
 			{\setlength{\parindent}{0cm}
 			$Nom :$ insertport\\\\
@@ -387,7 +393,7 @@ else:
 				\item date : Date où les services ont été vu
 				\item cursor : Curseur lié à la BDD\\
 			\end{description}
-			$Description : $ Cette fonction permet d'insérer les services lié à une machine dans la BDD. Contrairement à son nom, la fonction attend une liste de la strcture "Service" et non seulement une liste de port.
+			$Description : $ Cette fonction permet d'insérer les services lié à une machine dans la BDD. Contrairement à son nom, la fonction attend une liste de la structure "Service" et non seulement une liste de port.
 		\section{interruptprogram()}
 			{\setlength{\parindent}{0cm}
 			$Nom :$ interruptprogram\\\\
@@ -396,7 +402,7 @@ else:
 			\begin{description}
 				\item *args : Argument de l'interruption\\
 			\end{description}
-			$Description : $ Cette fonction est appelée lorsque le script reçoit une interruption clavier. Elle stopera le programme et coupera la connexion avec la BDD si jamais elle est toujours ouverte.
+			$Description : $ Cette fonction est appelée lorsque le script reçoit une interruption clavier. Elle stoppera le programme et coupera la connexion avec la BDD si jamais elle est toujours ouverte.
 		\section{readconf()}
 			{\setlength{\parindent}{0cm}
 			$Nom :$ readconf\\\\
@@ -415,7 +421,7 @@ else:
 				\item temptotal : Temps total du scan
 				\item cursor : Curseur lié à la BDD\\
 			\end{description}
-			$Description : $ Cette fonction n'est \textbf{plus utilisée} dans la version actuelle du script. Elle permet de mettre les résultats présent dans la BDD sous forme de fichier texte. Elle reste présente si jamais il est préférable, dans l'avenir, de recevoir les résultats par mail sous forme de fichier texte.
+			$Description : $ Cette fonction n'est \textbf{plus utilisée} dans la version actuelle du script. Elle permet de mettre les résultats présents dans la BDD sous forme de fichier texte. Elle reste présente si jamais il est préférable, dans l'avenir, de recevoir les résultats par mail sous forme de fichier texte.
 		\section{result\_to\_csv\_file()}
 			{\setlength{\parindent}{0cm}
 			$Nom :$ result\_to\_csv\_file\\\\
@@ -425,7 +431,7 @@ else:
 				\item temptotal : Temps total du scan
 				\item cursor : Curseur lié à la BDD\\
 			\end{description}
-			$Description : $ Cette fonction permet de mettre les résultats présent dans la BDD sous forme de fichier "csv". Lorsque l'utilisateur demande à recevoir les résultats par mail, c'est cette fonction qui générera le fichier mit en pièce jointe du mail.
+			$Description : $ Cette fonction permets de mettre les résultats présent dans la BDD sous forme de fichier "csv". Lorsque l'utilisateur demande de recevoir les résultats par mail, c'est cette fonction qui générera le fichier mit en pièce jointe du mail.
 		\section{returnmid()}
 			{\setlength{\parindent}{0cm}
 			$Nom :$ returnmid\\\\
@@ -464,7 +470,7 @@ else:
 			\begin{description}
 				\item listehost : Liste d'objet "Host"\\
 			\end{description}
-			$Description : $ Cette fonction permet de lancer l'insertion des informations en BDD. Grâce à une liste d'objet "Host", elle fera appelle à la fonction "insertmachine" et "insertport" qui seront déduire les informations stockées dans la liste. Par la suite elle fera un commit des requêtes fait dans les deux fonctions. 
+			$Description : $ Cette fonction permet de lancer l'insertion des informations en BDD. Grâce à une liste d'objet "Host", elle fera appel aux fonctions "insertmachine" et "insertport" qui seront déduire les informations stockées dans la liste. Par la suite elle fera un commit des requêtes fais dans les deux fonctions. 
 		\section{send\_result\_mail()}
 			{\setlength{\parindent}{0cm}
 			$Nom :$ send\_result\_mail\\\\
@@ -484,7 +490,7 @@ else:
 				\item port : Plage de port à scanner
 				\item mode : Vitesse du scan "fast" ou "slow"\\
 			\end{description}
-			$Description : $ Cette fonction permet de lancer le scan NMAP. Elle prendra en compte le vitesse choisi par l'utilisateur. Si la vitesse est "fast", le programme utilisera les threads NAMP. Dans le cas contraire il fera un scan normal utilisant les paramètres "-sV -f --script banner".
+			$Description : $ Cette fonction permet de lancer le scan NMAP. Elle prendra en compte la vitesse choisi par l'utilisateur. Si la vitesse est "fast", le programme utilisera les threads NAMP. Dans le cas contraire il fera un scan normal utilisant les paramètres "-sV -f --script banner".
 		\section{writelog()}
 			{\setlength{\parindent}{0cm}
 			$Nom :$ writelog\\\\
@@ -493,5 +499,5 @@ else:
 			\begin{description}
 				\item chaine : Chaine de caractère à écrire dans les logs\\
 			\end{description}
-			$Description : $ Cette fonction permet d'écrire dans les logs. Dans tout le programme sont présent des appels à cette fonction. Il suffit juste de renseigner l'erreur en paramètre et celle-ci sera renseignée dans les logs avec la date d'écriture du log.
+			$Description : $ Cette fonction permet d'écrire dans les logs. Dans tout le programme, sont présent des appels à cette fonction. Il suffit juste de renseigner l'erreur en paramètre et celle-ci sera renseignée dans les logs avec la date d'écriture du log.
 \end{document}
