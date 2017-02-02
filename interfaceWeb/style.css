@@ -13,6 +13,13 @@ border: thin solid #6495ed;
 width: 60%;
 }
 
-#mid:hover {
-background-color: #00ffff;
-  }
+ul {
+margin-top:0;
+margin-left:5%;
+padding:0;
+}
+
+li{
+margin-left:5%;
+display: inline;
+}

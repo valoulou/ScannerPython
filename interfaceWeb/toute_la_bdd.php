@@ -14,10 +14,10 @@ include_once 'includes/credentials.php';
 
     <body>
 
-      <h1> Projet Scanner </h1>
+      <h1>Liste des services scannés</h1>
 
       <ul>
-        <li><a href = "service_managed.php">Services Managed</a></li>
+        <li><a href = "service_managed.php">Voir les services managés</a></li>
         <li><a href = "rules_anchor.txt" target="_blank">Voir le fichier rules_anchor</a></li>
       </ul>
 
@@ -27,7 +27,6 @@ include_once 'includes/credentials.php';
       if (!$bdd) {
           die('Connexion impossible : ' . mysql_error());
       }
-      echo "Connecte correctement <br>";
 
       $result = $bdd->query ("SELECT machines.ip, services.mid, services.sid, services.port, services.proto, services.nom_service, services.state, services.version, services.banner, services.last_view, services.manage  FROM services, machines WHERE (machines.mid = services.mid) AND state = 'open'");
       $result->setFetchMode(PDO::FETCH_ASSOC);
