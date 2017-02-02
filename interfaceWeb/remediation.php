@@ -8,7 +8,6 @@ include_once 'includes/credentials.php';
   if (!$bdd) {
       die('Connexion impossible : ' . mysql_error());
   }
-  echo "Connecte correctement <br>";
 
   $result = $bdd->query ("SELECT machines.mid, services.mid, services.proto, services.port, services.manage, machines.ip FROM services, machines WHERE (machines.mid = services.mid) AND manage=2");
   $result->setFetchMode(PDO::FETCH_ASSOC);
@@ -24,7 +23,9 @@ include_once 'includes/credentials.php';
 
   fclose($rulesFile);
 
+ header('Location: service_managed.php');
+
   mysql_close($bdd);
 
-  header('Location: service_managed.php');
+
  ?>

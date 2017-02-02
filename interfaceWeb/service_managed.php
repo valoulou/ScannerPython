@@ -15,6 +15,11 @@ include_once 'includes/credentials.php';
   <body>
     <h1>Service managed</h1>
 
+    <ul>
+      <li><a href = "toute_la_bdd.php">Voir toute la bdd</a></li>
+      <li><a href = "rules_anchor.txt" target="_blank">Voir le fichier rules_anchor</a></li>
+    </ul>
+
     <p>1: Port laissé ouvert</p>
     <p>2: Port à fermer</p>
 
@@ -68,13 +73,13 @@ include_once 'includes/credentials.php';
 
     </table>
 
+    <form action="remediation.php" method="post">
+      <input type="submit" value="Generer les règles" />
+    </form>
+
     <?php
       mysql_close($bdd);
     ?>
-
-    <form action="remediation.php" method="post">
-    <input type="submit" value="Generer les règles" />
-    </form>
   </body>
 
 </html>

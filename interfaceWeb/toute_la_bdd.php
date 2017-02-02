@@ -16,6 +16,11 @@ include_once 'includes/credentials.php';
 
       <h1> Projet Scanner </h1>
 
+      <ul>
+        <li><a href = "service_managed.php">Services Managed</a></li>
+        <li><a href = "rules_anchor.txt" target="_blank">Voir le fichier rules_anchor</a></li>
+      </ul>
+
       <?php
 
       $bdd = new PDO('mysql:host='.HOST.';dbname='.DBNAME, USER, PWD);
