@@ -7,6 +7,8 @@
 \usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
 \usepackage[frenchb.ldf]{babel}
 \usepackage{graphicx}
+\usepackage[]{algorithm2e}
+
 
 \title{Scanner Nmap Python}
 \author {\bf Auteur\\\\
@@ -325,6 +327,84 @@ else:
 			\end{itemize}
 		\paragraph{}
 			Une fois l'insertion en BDD terminée, le script va soit terminer et recommencer, ou alors envoyer les résultats par mail avant de recommencer. Si c'est le cas, le script va remplir un fichier ".csv" (fichier tableur) qu'il mettra en pièce jointe du mail qui sera envoyé. L'envoi du mail se basera aussi sur les informations renseignées dans le fichier de configuration.
+	\chapter{Algorithme principal}
+		\paragraph{}
+			Dans cette partie nous allons voir l'algorithme principal du programme.
+			\begin{algorithm}
+			 \eIf{longueur\_argument > 1}{
+			 	path\_conf = argument[2]
+			 }{
+			 	path\_conf = "pythonnmap.conf"
+			 }
+			 \While{true}{
+			 	\For {ip\_debut to ip\_fin}{
+			 		start\_thread\_scanner()\\
+			 		\If{ReadConf("WantTimeOut") = 'y'}{
+			 			start\_thread\_timeout()
+			 		}
+			 		wait\_thread\_scanner()\\
+			 		\eIf{result\_scanner = 'None'}{
+			 			start\_thread\_scanner\_simple()\\
+			 			\If{ReadConf("WantTimeOut") = 'y'}{
+					 			start\_thread\_timeout()
+					 	}
+					 	\eIf{result\_scanner = 'None'}{
+					 		print(Scan impossible)\\
+					 	}{
+					 		start\_analyze\_and\_insertion\_bdd()
+					 	}
+			 		}{
+			 			start\_analyze\_and\_insertion\_bdd()
+			 		}
+			 	}
+			 	\If{ReadConf("SendMail") = 'y'}{
+			 		send\_mail()
+			 	}
+			 }
+			 \caption{Main algortithm jajscan.py}
+			\end{algorithm}
+	\chapter{Structures}
+		\section{class Host}
+			{\setlength{\parindent}{0cm}
+			$Propri\acute{e}t\acute{e} :$
+			}
+			\begin{description}
+				\item ip : IP de la machine
+				\item serv : Tableau de structure Service
+				\item fqdn : FQDN de la machine
+				\item date : Date où la machine a été vu
+			\end{description}
+			$Description :$ Cette structure permet de paramétrer une machine. Elle correspond en tout point à la base de données sauf qu'elle est liée au service via un tableau de la class "Service".
+		\section{class Service}
+			{\setlength{\parindent}{0cm}
+			$Propri\acute{e}t\acute{e} :$
+			}
+			\begin{description}
+				\item port : Port du service
+				\item version : Version du service
+				\item nomservice : Nom du service
+				\item state : Etat du service
+				\item banner : Bannière du service
+				\item proto : Protocole du service
+			\end{description}
+			$Description :$ Cette structure permet de paramètrer un service. C'est cette class qui est "liée" à la class "Host". Elle correspond en tout point à la base de données.
+		\section{class TimeOutThread}
+			{\setlength{\parindent}{0cm}
+			$Propri\acute{e}t\acute{e} :$
+			}
+			\begin{description}
+				\item run : Main du thread
+				\item stop : Permet de stopper le thread
+			\end{description}
+			$Description :$ Nous retrouvons ici le thread de time out. Celui-ci se basera sur la configuration présente dans le "pythonnmap.conf".
+		\section{class ScannerThread}
+			{\setlength{\parindent}{0cm}
+			$Propri\acute{e}t\acute{e} :$
+			}
+			\begin{description}
+				\item run : Main du thread
+			\end{description}
+			$Description :$ Ce thread permet de lancer le scan NMAP. Ce thread est attendu dans le main principal. S'il prend trop de temps il sera killé par le thread de time out.
 	\chapter{Fonctions}
 		\section{analyze()}
 			{\setlength{\parindent}{0cm}
@@ -367,11 +447,29 @@ else:
 			{\setlength{\parindent}{0cm}
 			$Nom :$ define\_ip\_addr\\\\
 			}
-			$Arguments :$
+			$Argument :$
 			\begin{description}
 				\item rangeip : Plage IP\\
 			\end{description}
 			$Description : $ Cette fonction permet de déduire les IP possible dans une plage IP. Cette fonction attend en paramètre soit la forme "X.X.X.0/XX" ou la forme "X.X.X.X-X". Ainsi, la fonction retournera une liste d'IP pour pouvoir scanner les IP une par une.
+		\section{get\_sec()}
+			{\setlength{\parindent}{0cm}
+			$Nom :$ get\_sec\\\\
+			}
+			$Argument :$
+			\begin{description}
+				\item time\_str : Temps à convertir (au format 00:00:00)\\
+			\end{description}
+			$Description :$ Cette fonction permet de convertir un temps au format 00:00:00. Elle retournera ce temps en secondes.
+		\section{get\_time()}
+			{\setlength{\parindent}{0cm}
+			$Nom :$ get\_time\\\\
+			}
+			$Argument :$
+			\begin{description}
+				\item seconds : Secondes à convertir
+			\end{description}
+			$Description :$ Cette fonction permet de convertir des secondes (sous forme d'entier) en temps au format 00:00:00.
 		\section{insertmachine()}
 			{\setlength{\parindent}{0cm}
 			$Nom :$ insertmachine\\\\
