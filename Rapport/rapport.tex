@@ -598,4 +598,31 @@ else:
 				\item chaine : Chaine de caractère à écrire dans les logs\\
 			\end{description}
 			$Description : $ Cette fonction permet d'écrire dans les logs. Dans tout le programme, sont présent des appels à cette fonction. Il suffit juste de renseigner l'erreur en paramètre et celle-ci sera renseignée dans les logs avec la date d'écriture du log.
+\part{L'interface WEB}
+	\paragraph{}
+		Nous l'avons vu dans la présentation du projet, une interface web permet de visualiser les machines scannées. Cette interface permet aussi de générer un fichier de règles pour un pare-feu.
+		\begin{figure}[ht]
+			\begin{center}\includegraphics[width=500pt,keepaspectratio]{/home/valentin/Python_scan/Rapport/IMG/accueil.png}
+			\caption{\label{accueil} Accueil de l'interface WEB}\end{center}
+		\end{figure}
+	\paragraph{}
+		Depuis l'accueil nous pouvons choisir ce que nous voulons faire. Nous pouvons par exemple aller dans "Voir l'ensemble des services scannés" :
+		\begin{figure}[ht]
+			\begin{center}\includegraphics[width=400pt,keepaspectratio]{/home/valentin/Python_scan/Rapport/IMG/liste_service.png}
+			\caption{\label{list_service} Liste services scannés}\end{center}
+		\end{figure}
+	\paragraph{}
+		Via cette interface, nous pouvons visualiser l'ensemble des machines et des services scannés. C'est ici aussi que nous pouvons choisir de changer le traitement du service. Par défaut, les services sont dans l'état "Non Managé". L'administrateur pourra alors choisir de changer pour fermer le service ou le laisser ouvert via les état "Est fermé" et "Laissé Ouvert".
+	\paragraph{}
+		En validant, l'administrateur ajoutera la règle dans le fichier de règles. Une fois le service managé et validé, nous pouvons le retrouver sur cette interface :
+		\begin{figure}[ht]
+			\begin{center}\includegraphics[width=400pt,keepaspectratio]{/home/valentin/Python_scan/Rapport/IMG/service_manages.png}
+			\caption{\label{service_manage} Liste services managés}\end{center}
+		\end{figure}
+	\paragraph{}
+		Il suffira à l'administrateur de cliquer sur le bouton "Générer les règles", en bas à gauche, pour que le fichier "rules\_anchor.txt" soit totalement regénèré. C'est-à-dire que toutes les règles seront supprimées puis remisent dans le fichier (utile si l'administrateur veut réouvrir l'accès à un service qu'il a fermé). Ce fichier contient alors les règles de pare-feu adapté à ce que l'administrateur a choisi de manager.
+		\begin{figure}[ht]
+			\begin{center}\includegraphics[width=300pt,keepaspectratio]{/home/valentin/Python_scan/Rapport/IMG/rules.png}
+			\caption{\label{rules} Exemple fichier règles pare-feu}\end{center}
+		\end{figure}
 \end{document}
