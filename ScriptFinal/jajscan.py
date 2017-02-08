@@ -185,11 +185,16 @@ class Service:
     def banner(self, b):
         self._banner = b
 
+## Documentation de la class TimeOutThread
+#  Cette classe corespond au thread de timeout
+
 class TimeOutThread(threading.Thread):
+    ## Constructeur class TimeOutThread
     def __init__(self):
         self.mode_compt = False
         self.timetostop = 0
         super(TimeOutThread, self).__init__()
+    ## Permet de lancer le thread
     def run(self):
         timetest = 0
         self.timetostop = get_sec(readconf("SetTimeOut"))
@@ -209,6 +214,7 @@ class TimeOutThread(threading.Thread):
 
         if self.running:
             os.system('killall nmap')
+    ## Permet de stopper le thread
     def stop(self):
         if self.mode_compt and self.timetostop > 2:
             setconf("SetTimeOut", get_time(self.timetostop+60))
@@ -668,6 +674,10 @@ if len(sys.argv) == 2:
     path_conf=sys.argv[1]
 else:
     path_conf="pythonnmap.conf"
+
+writelog("[*] Verification connexion BDD")
+trybdd = connect_bdd()
+writelog("[*] Connexion a la BDD OK")
 
 while True:
 
